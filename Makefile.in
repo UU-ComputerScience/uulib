@@ -1,0 +1,77 @@
+# Simple makefile to build UUAG.
+# Nothing fancy, just as simple as possible to get things done quickly.
+#   --Alexey
+
+help:
+	@echo Build system for the UU libraries
+	@echo Targets:
+	@echo
+	@echo dist - Create source distributions
+
+MV        = @MV@
+RM        = @RM@
+RM_F      = $(RM) -f
+CP        = @CP@
+FIND      = @FIND@
+MKDIR     = @MKDIR@
+VERSION   = @VERSION@
+
+
+# Directories
+SRC_DIR = src
+NAME = uulib
+
+
+#
+# distribution (for the time being source only and unix)
+#
+
+DISTTYPE=src
+
+ifeq ($(DISTTYPE),win32)
+        TARCZVF    := zip -r
+        TAREXT     := .zip
+else
+        TARCZVF    := tar cvzf
+        TAREXT     := .tar.gz
+endif
+
+# the name is hard-coded
+
+TODAY  := $(shell date '+%Y-%m-%d')
+DLABEL := $(NAME)-$(TODAY)
+VLABEL := $(NAME)-$(VERSION)
+DTLABEL:= $(NAME)-$(TODAY)-$(DISTTYPE)
+VTLABEL:= $(NAME)-$(VERSION)-$(DISTTYPE)
+
+dist_makedirs:
+	$(RM_F) -r $(DLABEL)
+	$(RM_F) -r $(VLABEL)
+	$(MKDIR) -p $(DLABEL)
+	for dir in `$(FIND) $(SRC_DIR) -type d -not -path '*/.svn*'`; do $(MKDIR) -p $(DLABEL)/$${dir}; done
+
+dist_copy: dist_makedirs $(SRC_HS_SEM) $(SRC_HS_SYN)
+	$(CP) -p LICENSE-LGPL \
+		 COPYRIGHT \
+		 VERSION \
+		 README \
+		 Makefile.in \
+		 configure \
+		 configure.in \
+		 uulib.cabal \
+		 uulib.cabal.in \
+		 Setup.hs \
+		 $(DLABEL)
+# populate sources
+	for file in `$(FIND) $(SRC_DIR) -name '*.hs' -type f -not -path '*/.svn*'`; do $(CP) -p $${file} $(DLABEL)/$${file}; done
+
+dist_pack: dist_copy
+	$(TARCZVF) $(DTLABEL)$(TAREXT) $(DLABEL)
+	$(MV) $(DLABEL) $(VLABEL)
+	$(TARCZVF) $(VTLABEL)$(TAREXT) $(VLABEL)
+
+dist: dist_info dist_pack
+
+dist_info:
+	@echo "* Generating distributions..."
+
