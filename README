@@ -1,13 +1,24 @@
--- Build and Install:
-ghc --make Setup.hs -o setup -package Cabal
+* Build and Install:
 
+---
+ghc --make Setup.hs -o setup -package Cabal
 ./setup configure
 ./setup build
 ./setup install
+---
 
-optionally Haddock Documentation:
--- requires cpphs 0.9
--- output generated in dist/doc/html
+* Optionally Haddock Documentation:
+ - requires cpphs 0.9
+ - output generated in dist/doc/html
 
+---
 ./setup haddock
+---
 
+
+* Prior steps for repository sources
+
+---
+autoconf
+./configure
+---
