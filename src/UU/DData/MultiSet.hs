@@ -99,7 +99,7 @@ import qualified UU.DData.Map as M
 {--------------------------------------------------------------------
   Operators
 --------------------------------------------------------------------}
-infixl 9 \\ 
+infixl 9 \\ --
 
 -- | /O(n+m)/. See 'difference'.
 (\\) :: Ord a => MultiSet a -> MultiSet a -> MultiSet a

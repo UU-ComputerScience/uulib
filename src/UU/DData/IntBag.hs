@@ -90,7 +90,7 @@ import qualified UU.DData.IntMap as M
 {--------------------------------------------------------------------
   Operators
 --------------------------------------------------------------------}
-infixl 9 \\ 
+infixl 9 \\ --
 
 -- | /O(n+m)/. See 'difference'.
 (\\) ::  IntBag -> IntBag -> IntBag
