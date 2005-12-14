@@ -1,7 +1,7 @@
 name: uulib
 version: @VERSION@
 license: OtherLicense
-maintainer: Atze Dijkstra <atze@cs.uu.nl>
+maintainer: Alexey Rodriguez <alexey@cs.uu.nl>
 Build-Depends: base, haskell98
 exposed-modules: UU.Parsing.CharParser UU.Parsing.Derived
                  UU.Parsing.Interface UU.Parsing.MachineInterface
