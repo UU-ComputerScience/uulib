@@ -1,24 +1,51 @@
-* Build and Install:
+Installing uulib from a source distribution
+-------------------------------------------
 
----
-ghc --make Setup.hs -o setup -package Cabal
-./setup configure
-./setup build
-./setup install
----
+  System wide installation assumming GHC is the
+  Haskell compiler.
 
-* Optionally Haddock Documentation:
- - requires cpphs 0.9
- - output generated in dist/doc/html
-
----
-./setup haddock
----
+    ghc --make Setup.hs -o setup -package Cabal
+    ./setup configure
+    ./setup build
+    ./setup install
 
 
-* Prior steps for repository sources
+Installing uulib to a non-standard location
+-------------------------------------------
 
----
-autoconf
-./configure
----
+  This is useful if you don't want (or can't)
+  modify system wide settings.
+
+    ghc --make Setup.hs -o setup -package Cabal
+    ./setup configure --prefix=/foo
+    ./setup build
+    ./setup install --user
+
+  The last command registers the package only for
+  the user.
+
+
+Installing uulib from the repository
+------------------------------------
+
+    autoconf
+    ./configure
+    ghc --make Setup.hs -o setup -package Cabal
+    ./setup configure
+    ./setup build
+    ./setup install
+
+  If you want to install to a non-standard location
+  you don't need to pass a path to configure, just follow
+  the steps outlined above.
+
+
+Optionally generating Haddock Documentation
+-------------------------------------------
+
+  Requires cpphs 0.9
+  Output generated in dist/doc/html
+
+    ./setup haddock
+
+
