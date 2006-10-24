@@ -17,5 +17,5 @@ exposed-modules: UU.Parsing.CharParser UU.Parsing.Derived
                  UU.Pretty.Basic UU.Parsing.Machine    
                  UU.DData.IntMap  
                  UU.DData.IntSet        
-Extensions:  RankNTypes CPP            
+Extensions:  RankNTypes CPP @EXTENSIONS@
 Hs-Source-Dir: src

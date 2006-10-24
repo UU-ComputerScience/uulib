@@ -226,7 +226,7 @@ infixl 9 \\ --
 
 -- | /O(min(n,W))/. See 'find'.
 (!) :: IntMap a -> Key -> a
-m ! k    = find k m
+(!) m k    = find k m
 
 -- | /O(n+m)/. See 'difference'.
 (\\) :: IntMap a -> IntMap a -> IntMap a
