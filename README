@@ -1,13 +1,39 @@
 Installing uulib from a source distribution
 -------------------------------------------
 
-  System wide installation assumming GHC is the
-  Haskell compiler.
+  The source distribution can be unpacked from the
+  .tar.gz files distributed in the following page:
+
+    http://www.cs.uu.nl/wiki/HUT/Download
+
+  System wide installation (assumming GHC is the
+  Haskell compiler) can be done like this:
 
     ghc --make Setup.hs -o setup -package Cabal
     ./setup configure
     ./setup build
     ./setup install
+
+
+Installing uulib from the subversion repository
+-----------------------------------------------
+
+  Which can be obtained running the following subversion command:
+
+    svn co https://svn.cs.uu.nl:12443/repos/uust-repo/uulib/trunk/
+
+  Now install following the instructions below:
+
+    autoconf
+    ./configure
+    ghc --make Setup.hs -o setup -package Cabal
+    ./setup configure
+    ./setup build
+    ./setup install
+
+  If you want to install to a non-standard location
+  you don't need to pass a path to configure, just follow
+  the steps outlined above.
 
 
 Installing uulib to a non-standard location
@@ -23,21 +49,6 @@ Installing uulib to a non-standard location
 
   The last command registers the package only for
   the user.
-
-
-Installing uulib from the repository
-------------------------------------
-
-    autoconf
-    ./configure
-    ghc --make Setup.hs -o setup -package Cabal
-    ./setup configure
-    ./setup build
-    ./setup install
-
-  If you want to install to a non-standard location
-  you don't need to pass a path to configure, just follow
-  the steps outlined above.
 
 
 Optionally generating Haddock Documentation
