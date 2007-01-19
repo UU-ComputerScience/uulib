@@ -158,10 +158,10 @@ libBest' l@(Cost i ls ) r@(Cost j rs ) lf rf
  | i =={-#L-} j = Cost i (libBest' ls rs lf rf)
  | i <{-#L-} j  = Cost i (val lf ls)
  | i >{-#L-} j  = Cost j (val rf rs)
-libBest' l@(Cost i ls)     _                 lf rf = Cost i (val lf ls)
-libBest' _                 r@(Cost j rs)     lf rf = Cost j (val rf rs)
 libBest' l@(NoMoreSteps v) _                 lf rf = NoMoreSteps (lf v)
 libBest' _                 r@(NoMoreSteps w) lf rf = NoMoreSteps (rf w)
+libBest' l@(Cost i ls)     _                 lf rf = Cost i (val lf ls)
+libBest' _                 r@(Cost j rs)     lf rf = Cost j (val rf rs)
 libBest' l                 r                 lf rf = libCorrect l r lf rf
 
 lib_correct :: Ord s => (b -> c -> Steps d s p) -> (b -> c -> Steps d s p) -> b -> c -> Steps d s p
