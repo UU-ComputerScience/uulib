@@ -9,6 +9,7 @@ Installing uulib from a source distribution
   System wide installation (assumming GHC is the
   Haskell compiler) can be done like this:
 
+    ./configure
     ghc --make Setup.hs -o setup -package Cabal
     ./setup configure
     ./setup build
@@ -26,6 +27,9 @@ Installing uulib from the subversion repository
 
     autoconf
     ./configure
+
+  This generates uulib.cabal which is needed for the cabal commands:
+
     ghc --make Setup.hs -o setup -package Cabal
     ./setup configure
     ./setup build
@@ -42,6 +46,7 @@ Installing uulib to a non-standard location
   This is useful if you don't want (or can't)
   modify system wide settings.
 
+    ./configure
     ghc --make Setup.hs -o setup -package Cabal
     ./setup configure --prefix=/foo
     ./setup build
