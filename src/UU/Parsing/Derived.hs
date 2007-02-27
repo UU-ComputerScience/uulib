@@ -11,6 +11,7 @@ infixl 5 <..>
 -- =======================================================================================
 -- ===== CHECKING ========================================================================
 -- =======================================================================================
+-- | Checks if the parser accepts epsilon.
 acceptsepsilon :: (IsParser p s) => p v -> Bool
 acceptsepsilon p       = case getzerop p of {Nothing -> False; _ -> True}
 
@@ -30,6 +31,11 @@ mnz p v comb
 -- ===== START OF PRELUDE DEFINITIONS ========== =========================================
 -- =======================================================================================
 
+-- | Parses the specified range, see also 'pRange'.
+-- 
+-- Example:
+-- 
+-- > pDig = 'a' <..> 'z'
 (<..>) :: (IsParser p s) => s -> s -> p s
 a <..> b   = pRange a (Range a b)
 
@@ -40,10 +46,16 @@ pExcept (l,r,err) elems = let ranges = filter (/= EmptyR) (Range l r `except` el
 
 
 
+-- | Optionally recognize parser 'p'.
+-- 
+-- If 'p' can be recognized, the return value of 'p' is used. Otherwise,
+-- the value 'v' is used. Note that opt is greedy, if you do not want
+-- this use @... <|> pSucceed v@  instead. Furthermore, 'p' should not
+-- recognise the empty string.
 opt ::  (IsParser p s) => p a -> a -> p a
-p `opt` v       = mnz p (p  <|> pLow v)  "opt"  -- note that opt is greedy, if you do not want this
-                                                -- use "... <|> pSucceed v"  instead
-                                                -- p should not recognise the empty string
+p `opt` v       = mnz p (p  <|> pLow v)  "opt"  
+                                                
+                                                
 
 -- =======================================================================================
 -- ===== Special sequential compositions =========================================
@@ -57,10 +69,19 @@ asList1 exp = setfirsts (ESeq [EStr "(",  exp, EStr  " ...)+"])
 asOpt :: (IsParser p s) => Expecting s -> p v -> p v
 asOpt   exp = setfirsts (ESeq [EStr "( ", exp, EStr  " ...)?"])
 
-
+-- | Parses the sequence of 'pa' and 'pb', and combines them as a tuple.
 (<+>) :: (IsParser p s) => p a -> p b -> p (a, b)
 pa <+> pb       = (,) <$> pa <*> pb
 
+-- | Suppose we have a parser a with two alternatives that both start
+-- with recognizing a non-terminal p, then we will typically rewrite:
+--
+-- > a =     f <$> p <*> q 
+-- >     <|> g <$> p <*> r 
+--
+-- into: 
+--
+-- > a = p <**> (f <$$> q <|> g <$$> r)
 (<**>) :: (IsParser p s) => p a -> p (a -> b) -> p b
 p <**> q        = (\ x f -> f x) <$> p <*> q
 
@@ -73,6 +94,11 @@ p <??> q        = p <**> (q `opt` id)
 (<?>) :: (IsParser p s) => p v -> String -> p v
 p <?>  str      = setfirsts  (EStr str) p
 
+-- | This can be used to parse 'x' surrounded by 'l' and 'r'.
+-- 
+-- Example:
+--
+-- > pParens = pPacked pOParen pCParen
 pPacked :: (IsParser p s) => p a -> p b1 -> p b -> p b
 pPacked l r x   =   l *>  x <*   r
 
@@ -169,8 +195,13 @@ pChainl_ng op x    =  if acceptsepsilon op then mnz x r "pChainl_ng (both argume
 pChainl :: (IsParser p s) => p (c -> c -> c) -> p c -> p c
 pChainl    op x    = pChainl_gr op x
 
+-- | Parses using any of the parsers in the list 'l'.
+--
+-- Warning: 'l' may not be an empty list.
 pAny :: (IsParser p s) =>(a -> p a1) -> [a] -> p a1
 pAny  f l = if null l then usererror "pAny: argument may not be empty list" else foldr1 (<|>) (map f l)
+
+-- | Parses any of the symbols in 'l'.
 pAnySym :: (IsParser p s) =>[s] -> p s
 pAnySym l = pAny pSym l -- used to be called pAnySym
 
