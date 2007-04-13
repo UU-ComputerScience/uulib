@@ -39,13 +39,16 @@ AC_SUBST(GHC_VERSION, $ghcVersion)
 case $ghcVersion in
   6.4.1)
     optCabalInstances=AllowUndecidableInstances
+    srcDirsField=Hs-Source-Dir
     ;;
   *)
     optCabalInstances=UndecidableInstances
+    srcDirsField=Hs-Source-Dirs
     ;;
 esac
 
 AC_SUBST(EXTENSIONS,"$optCabalInstances")
+AC_SUBST(SRC_DIRS_FIELD,"$srcDirsField")
 
 # cheap relative_dir, see GH for proper use
 relative_dir=.
