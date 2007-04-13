@@ -6,6 +6,10 @@ class InputState state s pos | state -> s, state -> pos where
  getPosition :: state             -> pos
  reportError :: Message s pos     -> state -> state
  reportError _ = id
+ insertSymbol :: s                -> state -> state
+ insertSymbol _ = id
+ deleteSymbol :: s                -> state -> state
+ deleteSymbol _ = id
  {-# INLINE splitStateE #-}
  {-# INLINE splitState  #-}
 
