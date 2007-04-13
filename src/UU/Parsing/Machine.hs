@@ -55,11 +55,11 @@ libAccept            = mkPR (P (\ acc k state ->
 libInsert  c sym  firsts =mkPR( P (\acc k state ->  let msg = Msg  firsts 
                                                                      (getPosition state)
                                                                      (Insert sym)            
-                                                    in StRepair c msg (val (acc sym) (k (reportError msg state))))
+                                                    in StRepair c msg (val (acc sym) (k (insertSymbol sym (reportError msg state)))))
                               , R (\    k state ->  let msg = Msg  firsts 
                                                                      (getPosition state)
                                                                      (Insert sym)       
-                                                    in StRepair c msg (k (reportError msg state)))
+                                                    in StRepair c msg (k (insertSymbol sym (reportError msg state))))
                               )
 {-# INLINE libSeq  #-}
 {-# INLINE libSeqL #-}
@@ -325,7 +325,7 @@ mkParser length zd ~descr@(OneDescr firsts tab) -- pattern matching should be la
                correct k inp
                  = case splitState inp of
                        ({-#L-} s, ss {-L#-}) -> let { msg = Msg firsts (getPosition inp) (Delete s)
-                                                    ; newinp = reportError msg ss
+                                                    ; newinp = deleteSymbol s (reportError msg ss)
                                                     }
                                                 in libCorrect (StRepair (deleteCost s) msg (result k newinp))
                                                               (insertsyms k inp) id id

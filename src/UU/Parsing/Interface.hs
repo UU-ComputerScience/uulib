@@ -26,9 +26,11 @@ type Parser s = AnaParser [s] Pair s (Maybe s)
 -- =======================================================================================
 
 class  IsParser p s | p -> s where
+  -- | Sequential composition. Often used in combination with <$>.
   (<*>) :: p (a->b) -> p a -> p b
   (<* ) :: p a      -> p b -> p a
   ( *>) :: p a      -> p b -> p b
+  -- | Applies the function f to the result of p after parsing p.
   (<$>) :: (a->b)   -> p a -> p b
   (<$ ) :: b        -> p a -> p b
   pSucceed :: a -> p a
@@ -37,10 +39,13 @@ class  IsParser p s | p -> s where
   f <$  q = pSucceed f <*  q
   p <*  q = pSucceed       const  <*> p <*> q
   p  *> q = pSucceed (flip const) <*> p <*> q
+  -- | Alternative combinator.
   (<|>) :: p a -> p a -> p a
+  -- | This parser always fails.
   pFail :: p a
   pCostRange   :: Int{-#L-} -> s -> SymbolR s -> p s
   pCostSym     :: Int{-#L-} -> s -> s         -> p s
+  -- | Parses a symbol.
   pSym         ::                   s         -> p s
   pRange       ::              s -> SymbolR s -> p s
   getfirsts    :: p v -> Expecting s
