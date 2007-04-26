@@ -39,8 +39,11 @@ class  IsParser p s | p -> s where
   -- | Applies the function f to the result of p after parsing p.
   (<$>) :: (a->b)   -> p a -> p b
   (<$ ) :: b        -> p a -> p b
-  -- | Two variants of the parser for empty strings
+  -- | Two variants of the parser for empty strings. 'pSucceed' parses the
+  -- empty string, and fully counts as an alternative parse.
   pSucceed :: a -> p a
+  -- | 'pLow' parses the empty string, but alternatives to pLow are always
+  -- preferred over 'pLow' parsing the empty string.
   pLow     :: a -> p a
   f <$> p = pSucceed f <*> p
   f <$  q = pSucceed f <*  q
