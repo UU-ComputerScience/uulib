@@ -33,11 +33,13 @@ type Parser s = AnaParser [s] Pair s (Maybe s)
 class  IsParser p s | p -> s where
   -- | Sequential composition. Often used in combination with <$>.
   (<*>) :: p (a->b) -> p a -> p b
+  -- | Value ignoring versions of sequential composition
   (<* ) :: p a      -> p b -> p a
   ( *>) :: p a      -> p b -> p b
   -- | Applies the function f to the result of p after parsing p.
   (<$>) :: (a->b)   -> p a -> p b
   (<$ ) :: b        -> p a -> p b
+  -- | Two variants of the parser for empty strings
   pSucceed :: a -> p a
   pLow     :: a -> p a
   f <$> p = pSucceed f <*> p
@@ -48,16 +50,28 @@ class  IsParser p s | p -> s where
   (<|>) :: p a -> p a -> p a
   -- | This parser always fails.
   pFail :: p a
+  -- | Parses a range of symbols with an associated cost and the symbol to
+  -- insert if no symbol in the range is present.
   pCostRange   :: Int{-#L-} -> s -> SymbolR s -> p s
+  -- | Parses a symbol with an associated cost and the symbol to insert if
+  -- the symbol to parse isn't present.
   pCostSym     :: Int{-#L-} -> s -> s         -> p s
   -- | Parses a symbol.
   pSym         ::                   s         -> p s
   pRange       ::              s -> SymbolR s -> p s
+  -- | Get the firsts set from the parser, i.e. the symbols it expects.
   getfirsts    :: p v -> Expecting s
+  -- | Set the firsts set in the parser.
   setfirsts    :: Expecting s -> p v ->  p v
   pSym a       =  pCostSym   5{-#L-} a a
   pRange       =  pCostRange 5{-#L-}
+  -- | 'getzerop' returns @Nothing@ if the parser can not parse the empty
+  -- string, and returns @Just p@ with @p@ a parser that parses the empty 
+  -- string and returns the appropriate value.
   getzerop     ::              p v -> Maybe (p v)
+  -- | 'getonep' returns @Nothing@ if the parser can only parse the empty
+  -- string, and returns @Just p@ with @p@ a parser that does not parse any
+  -- empty string.
   getonep      :: p v -> Maybe (p v)
 
 
