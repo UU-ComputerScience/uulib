@@ -1,17 +1,33 @@
 module UU.Parsing.MachineInterface where
 
+-- | The 'InputState' class contains the interface that the AnaParser
+-- parsers expect for the input. A minimal complete instance definition
+-- consists of 'splitStateE', 'splitState' and 'getPosition'.
 class InputState state s pos | state -> s, state -> pos where
+ -- | Splits the state in a strict variant of 'Either', with 'Left'' if a symbol
+ --   can be split off and 'Right'' if none can
  splitStateE :: state             -> Either' state s
+ -- | Splits the state in the first symbol and the remaining state
  splitState  :: state             -> ({-#L-} s, state  {-L#-})
+ -- | Gets the current position in the input
  getPosition :: state             -> pos
+ -- | Reports an error
  reportError :: Message s pos     -> state -> state
  reportError _ = id
+ -- | Modify the state as the result of inserting a symbol 's' in the input.
+ -- The symbol that has already been considered as having been inserted 
+ -- is passed. It should normally not be added to the state.
  insertSymbol :: s                -> state -> state
  insertSymbol _ = id
+ -- | Modify the state as the result of deleting a symbol 's' from the input.
+ -- The symbol that has already been deleted from the input state is passed.
+ -- It should normally not be deleted from the state.
  deleteSymbol :: s                -> state -> state
  deleteSymbol _ = id
  {-# INLINE splitStateE #-}
  {-# INLINE splitState  #-}
+ {-# INLINE insertSymbol  #-}
+ {-# INLINE deleteSymbol  #-}
 
 class OutputState r  where
   acceptR      ::                     v                   -> rest        -> r v rest
