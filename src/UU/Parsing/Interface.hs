@@ -32,15 +32,21 @@ type Parser s = AnaParser [s] Pair s (Maybe s)
 -- and 'setzerop'.
 class  IsParser p s | p -> s where
   -- | Sequential composition. Often used in combination with <$>.
+  -- The function returned by parsing the left-hand side is applied 
+  -- to the value returned by parsing the right-hand side.
   (<*>) :: p (a->b) -> p a -> p b
-  -- | Value ignoring versions of sequential composition
+  -- | Value ignoring versions of sequential composition. These ignore
+  -- either the value returned by the parser on the right-hand side or 
+  -- the left-hand side, depending on the visual direction of the
+  -- combinator.
   (<* ) :: p a      -> p b -> p a
   ( *>) :: p a      -> p b -> p b
   -- | Applies the function f to the result of p after parsing p.
   (<$>) :: (a->b)   -> p a -> p b
   (<$ ) :: b        -> p a -> p b
   -- | Two variants of the parser for empty strings. 'pSucceed' parses the
-  -- empty string, and fully counts as an alternative parse.
+  -- empty string, and fully counts as an alternative parse. It returns the
+  -- value passed to it.
   pSucceed :: a -> p a
   -- | 'pLow' parses the empty string, but alternatives to pLow are always
   -- preferred over 'pLow' parsing the empty string.
@@ -49,17 +55,20 @@ class  IsParser p s | p -> s where
   f <$  q = pSucceed f <*  q
   p <*  q = pSucceed       const  <*> p <*> q
   p  *> q = pSucceed (flip const) <*> p <*> q
-  -- | Alternative combinator.
+  -- | Alternative combinator. Succeeds if either of the two arguments
+  -- succeed, and returns the result of the best success parse.
   (<|>) :: p a -> p a -> p a
-  -- | This parser always fails.
+  -- | This parser always fails, and never returns any value at all.
   pFail :: p a
   -- | Parses a range of symbols with an associated cost and the symbol to
-  -- insert if no symbol in the range is present.
+  -- insert if no symbol in the range is present. Returns the actual symbol
+  -- parsed.
   pCostRange   :: Int{-#L-} -> s -> SymbolR s -> p s
   -- | Parses a symbol with an associated cost and the symbol to insert if
-  -- the symbol to parse isn't present.
+  -- the symbol to parse isn't present. Returns either the symbol parsed or
+  -- the symbol inserted.
   pCostSym     :: Int{-#L-} -> s -> s         -> p s
-  -- | Parses a symbol.
+  -- | Parses a symbol. Returns the symbol parsed.
   pSym         ::                   s         -> p s
   pRange       ::              s -> SymbolR s -> p s
   -- | Get the firsts set from the parser, i.e. the symbols it expects.
@@ -78,6 +87,12 @@ class  IsParser p s | p -> s where
   getonep      :: p v -> Maybe (p v)
 
 
+-- | The fast 'AnaParser' instance of the 'IsParser' class. Note that this
+-- requires a functioning 'Ord' for the symbol type s, as tokens are
+-- often compared using the 'compare' function in 'Ord' rather than always
+-- using '==' rom 'Eq'. The two do need to be consistent though, that is
+-- for any two @x1@, @x2@ such that @x1 == x2@ you must have 
+-- @compare x1 x2 == EQ@.
 instance (Ord s, Symbol s, InputState state s p, OutputState result) => IsParser (AnaParser state result s p) s   where
   (<*>) p q = anaSeq libDollar  libSeq  ($) p q
   (<* ) p q = anaSeq libDollarL libSeqL const p q
