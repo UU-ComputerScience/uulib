@@ -34,6 +34,9 @@ class  IsParser p s | p -> s where
   -- | Sequential composition. Often used in combination with <$>.
   -- The function returned by parsing the left-hand side is applied 
   -- to the value returned by parsing the right-hand side.
+  -- Note: Implementations of this combinator should lazily match on
+  -- and evaluate the right-hand side parser. The derived combinators 
+  -- for list parsing will explode if they do not.
   (<*>) :: p (a->b) -> p a -> p b
   -- | Value ignoring versions of sequential composition. These ignore
   -- either the value returned by the parser on the right-hand side or 
