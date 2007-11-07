@@ -1,3 +1,4 @@
+{-# OPTIONS -fglasgow-exts  #-}
 module UU.Parsing.Interface 
        ( AnaParser, pWrap, pMap
        , module UU.Parsing.MachineInterface

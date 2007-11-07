@@ -1,3 +1,4 @@
+{-# OPTIONS -fglasgow-exts  #-}
 module UU.Parsing.Perms(Perms(), pPerms, pPermsSep, succeedPerms, (~*~), (~$~)) where
 
 import UU.Parsing

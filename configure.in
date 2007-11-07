@@ -35,14 +35,21 @@ AC_PATH_PROG(GHC,ghc)
 ghcVersion=`$GHC --numeric-version`
 AC_SUBST(GHC_VERSION, $ghcVersion)
 
-# after ghc 6.4.1 the names of cabal option(s) changed
 case $ghcVersion in
+  6.8.1)
+    optCabalInstances="RankNTypes FunctionalDependencies TypeSynonymInstances UndecidableInstances FlexibleInstances MultiParamTypeClasses FlexibleContexts CPP"
+    srcDirsField=Hs-Source-Dirs
+    ;;
+  6.4)
+    optCabalInstances="RankNTypes AllowUndecidableInstances CPP"
+    srcDirsField=Hs-Source-Dir
+    ;;
   6.4.1)
-    optCabalInstances=AllowUndecidableInstances
+    optCabalInstances="RankNTypes AllowUndecidableInstances CPP"
     srcDirsField=Hs-Source-Dir
     ;;
   *)
-    optCabalInstances=UndecidableInstances
+    optCabalInstances="RankNTypes UndecidableInstances CPP"
     srcDirsField=Hs-Source-Dirs
     ;;
 esac
