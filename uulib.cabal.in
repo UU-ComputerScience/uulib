@@ -1,7 +1,7 @@
 name: uulib
 version: @VERSION@
 license: OtherLicense
-maintainer: Alexey Rodriguez <alexey@cs.uu.nl>
+maintainer: Arie Middelkoop <ariem@cs.uu.nl>
 Build-Depends: base, haskell98
 exposed-modules: UU.Parsing.CharParser UU.Parsing.Derived
                  UU.Parsing.Interface UU.Parsing.MachineInterface
@@ -17,5 +17,5 @@ exposed-modules: UU.Parsing.CharParser UU.Parsing.Derived
                  UU.Pretty.Basic UU.Parsing.Machine    
                  UU.DData.IntMap  
                  UU.DData.IntSet        
-Extensions:  @EXTENSIONS@
-@SRC_DIRS_FIELD@: src
+Extensions:  RankNTypes FunctionalDependencies TypeSynonymInstances UndecidableInstances FlexibleInstances MultiParamTypeClasses FlexibleContexts CPP
+Hs-Source-Dirs: src

@@ -1,3 +1,6 @@
+Please check the right section in this file for instructions depending on how you obtained the source files.
+
+
 Installing uulib from a source distribution
 -------------------------------------------
 
@@ -9,11 +12,25 @@ Installing uulib from a source distribution
   System wide installation (assumming GHC is the
   Haskell compiler) can be done like this:
 
-    ./configure
     ghc --make Setup.hs -o setup -package Cabal
     ./setup configure
     ./setup build
     ./setup install
+
+
+Installing uulib to a non-standard location
+-------------------------------------------
+
+  This is useful if you don't want (or can't)
+  modify system wide settings.
+
+    ghc --make Setup.hs -o setup -package Cabal
+    ./setup configure --prefix=/foo
+    ./setup build
+    ./setup install --user
+
+  The last command registers the package only for
+  the user.
 
 
 Installing uulib from the subversion repository
@@ -27,6 +44,10 @@ Installing uulib from the subversion repository
 
     autoconf
     ./configure
+  
+  NOTE: the above instructions are REQUIRED when you install from the
+  subversion repository. They are not needed when you download a
+  source distribution.
 
   This generates uulib.cabal which is needed for the cabal commands:
 
@@ -40,22 +61,6 @@ Installing uulib from the subversion repository
   the steps outlined above.
 
 
-Installing uulib to a non-standard location
--------------------------------------------
-
-  This is useful if you don't want (or can't)
-  modify system wide settings.
-
-    ./configure
-    ghc --make Setup.hs -o setup -package Cabal
-    ./setup configure --prefix=/foo
-    ./setup build
-    ./setup install --user
-
-  The last command registers the package only for
-  the user.
-
-
 Optionally generating Haddock Documentation
 -------------------------------------------
 
@@ -63,5 +68,4 @@ Optionally generating Haddock Documentation
   Output generated in dist/doc/html
 
     ./setup haddock
-
 

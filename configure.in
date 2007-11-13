@@ -29,33 +29,6 @@ AC_PATH_PROG(RANLIB,ranlib)
 AC_PATH_PROG(LD,ld)
 AC_PATH_PROG(GREP,grep)
 AC_PATH_PROG(CHMOD,chmod)
-AC_PATH_PROG(GHC,ghc)
-
-# determine GHC version
-ghcVersion=`$GHC --numeric-version`
-AC_SUBST(GHC_VERSION, $ghcVersion)
-
-case $ghcVersion in
-  6.8.1)
-    optCabalInstances="RankNTypes FunctionalDependencies TypeSynonymInstances UndecidableInstances FlexibleInstances MultiParamTypeClasses FlexibleContexts CPP"
-    srcDirsField=Hs-Source-Dirs
-    ;;
-  6.4)
-    optCabalInstances="RankNTypes AllowUndecidableInstances CPP"
-    srcDirsField=Hs-Source-Dir
-    ;;
-  6.4.1)
-    optCabalInstances="RankNTypes AllowUndecidableInstances CPP"
-    srcDirsField=Hs-Source-Dir
-    ;;
-  *)
-    optCabalInstances="RankNTypes UndecidableInstances CPP"
-    srcDirsField=Hs-Source-Dirs
-    ;;
-esac
-
-AC_SUBST(EXTENSIONS,"$optCabalInstances")
-AC_SUBST(SRC_DIRS_FIELD,"$srcDirsField")
 
 # cheap relative_dir, see GH for proper use
 relative_dir=.
