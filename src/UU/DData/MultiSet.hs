@@ -164,7 +164,7 @@ empty
 -- | /O(1)/. Create a singleton multi set.
 single :: a -> MultiSet a
 single x 
-  = MultiSet (M.single x 0)
+  = MultiSet (M.single x 1)
     
 {--------------------------------------------------------------------
   Insertion, Deletion
@@ -177,6 +177,8 @@ insert x (MultiSet m)
 -- | /O(min(n,W))/. The expression (@insertMany x count mset@)
 -- inserts @count@ instances of @x@ in the multi set @mset@.
 insertMany ::  Ord a => a -> Int -> MultiSet a -> MultiSet a
+-- We still expect not to get count < 0
+insertMany x 0 multiset = multiset
 insertMany x count (MultiSet m)          
   = MultiSet (M.insertWith (+) x count m)
 
@@ -185,7 +187,7 @@ delete :: Ord a => a -> MultiSet a -> MultiSet a
 delete x (MultiSet m)
   = MultiSet (M.updateWithKey f x m)
   where
-    f x n  | n > 0     = Just (n-1)
+    f x n  | n > 1     = Just (n-1)
            | otherwise = Nothing
 
 -- | /O(log n)/. Delete all occurrences of an element.
@@ -226,7 +228,14 @@ difference (MultiSet t1) (MultiSet t2)
 -- | The union of a list of multisets.
 unions :: Ord a => [MultiSet a] -> MultiSet a
 unions multisets
-  = MultiSet (M.unions [m | MultiSet m <- multisets])
+  -- Original, wrong
+  -- = MultiSet (M.unions [m | MultiSet m <- multisets])
+  -- Map has no unionsWith
+  -- = MultiSet (M.unionsWith (+) [m | MultiSet m <- multisets])
+  -- Correct, but requires Data.List.foldl'
+  -- = MultiSet (foldl' (M.unionWith (+)) M.empty [m | MultiSet m <- multisets])
+  -- Correct, but not strict like the original (M.unions uses foldStrict)
+  = foldr union empty multisets
 
 {--------------------------------------------------------------------
   Filter and partition
