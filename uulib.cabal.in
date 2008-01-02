@@ -1,8 +1,15 @@
 name: uulib
 version: @VERSION@
-license: OtherLicense
+license: LGPL
+license-file: LICENSE-LGPL
 maintainer: Arie Middelkoop <ariem@cs.uu.nl>
-Build-Depends: base, haskell98
+homepage: http://www.cs.uu.nl/wiki/HUT/WebHome
+description: Fast Parser Combinators and Pretty Printing Combinators
+synopsis: Haskell Utrecht Tools Library
+category: Parsing
+stability: Stable
+copyright: Universiteit Utrecht
+build-depends: base, haskell98
 exposed-modules: UU.Parsing.CharParser UU.Parsing.Derived
                  UU.Parsing.Interface UU.Parsing.MachineInterface
                  UU.Parsing.Merge UU.Parsing.Offside UU.Parsing.Perms
@@ -17,5 +24,5 @@ exposed-modules: UU.Parsing.CharParser UU.Parsing.Derived
                  UU.Pretty.Basic UU.Parsing.Machine    
                  UU.DData.IntMap  
                  UU.DData.IntSet        
-Extensions:  RankNTypes FunctionalDependencies TypeSynonymInstances UndecidableInstances FlexibleInstances MultiParamTypeClasses FlexibleContexts CPP
-Hs-Source-Dirs: src
+extensions:  RankNTypes FunctionalDependencies TypeSynonymInstances UndecidableInstances FlexibleInstances MultiParamTypeClasses FlexibleContexts CPP
+hs-source-dirs: src
