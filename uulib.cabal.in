@@ -3,7 +3,7 @@ build-type: Simple
 name: uulib
 version: @VERSION@
 license: LGPL
-license-file: LICENSE-LGPL
+license-file: COPYRIGHT
 maintainer: Arie Middelkoop <ariem@cs.uu.nl>
 homepage: http://www.cs.uu.nl/wiki/HUT/WebHome
 description: Fast Parser Combinators and Pretty Printing Combinators
@@ -28,3 +28,4 @@ exposed-modules: UU.Parsing.CharParser UU.Parsing.Derived
                  UU.DData.IntSet        
 extensions:  RankNTypes FunctionalDependencies TypeSynonymInstances UndecidableInstances FlexibleInstances MultiParamTypeClasses FlexibleContexts CPP ExistentialQuantification
 hs-source-dirs: src
+extra-source-files: README, LICENSE-LGPL
