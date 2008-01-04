@@ -20,7 +20,7 @@ instance InputState Input Char Pos where
                                 ('\LF' : _ ) -> Left' '\CR' (Input xs pos)
                                 _            -> Left' '\CR' (Input xs (newl pos))
           ('\LF':      xs) -> Left' '\LF' (Input xs (newl   pos))
-          ('\n' :      xs) -> Left' '\n'  (Input xs (newl pos))
+--          ('\n' :      xs) -> Left' '\n'  (Input xs (newl pos))  -- \n already captured above
           ('\t' :      xs) -> Left' '\t' (Input xs (tab    pos))
           (x    :      xs) -> Left' x    (Input xs (advc 1 pos))
           []               -> Right'     (Input [] pos)
@@ -31,7 +31,7 @@ instance InputState Input Char Pos where
                                 ('\LF' : _ ) -> ('\CR', Input xs pos)
                                 _            -> ('\CR', Input xs (newl pos))
           ('\LF':      xs) -> ( '\LF', Input xs (newl   pos))
-          ('\n' :      xs) -> ( '\n' , Input xs (newl   pos))
+--          ('\n' :      xs) -> ( '\n' , Input xs (newl   pos)) -- \n already captured above
           ('\t' :      xs) -> ( '\t' , Input xs (tab    pos))
           (x    :      xs) -> ( x    , Input xs (advc 1 pos))
 

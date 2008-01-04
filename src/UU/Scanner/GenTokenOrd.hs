@@ -12,3 +12,4 @@ instance (Ord key, Ord tp) => Ord (GenToken key tp val) where
   compare (Reserved _    _) _                 = LT
   compare (ValToken tx _ _) (ValToken ty _ _) = compare tx ty
   compare _              _                    = GT
+

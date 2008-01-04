@@ -51,3 +51,4 @@ pValToken               =  pCostValToken 5
 pValTokenNoPos          :: IsParser p (GenToken key tp val) 
                         => tp -> val -> p val
 pValTokenNoPos tp val   =  fst <$> pValToken tp val                          
+

@@ -9,3 +9,4 @@ position :: GenToken k t v -> Pos
 position tok = case tok of
                    Reserved _ p   -> p
                    ValToken _ _ p -> p
+

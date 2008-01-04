@@ -278,3 +278,4 @@ prop_TailValid :: [Int] -> Bool
 prop_TailValid xs
   = valid (tail (foldr insert empty (1:xs)))
 -}
+

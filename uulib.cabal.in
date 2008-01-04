@@ -1,3 +1,5 @@
+cabal-version: >=1.1
+build-type: Simple
 name: uulib
 version: @VERSION@
 license: LGPL
@@ -24,5 +26,5 @@ exposed-modules: UU.Parsing.CharParser UU.Parsing.Derived
                  UU.Pretty.Basic UU.Parsing.Machine    
                  UU.DData.IntMap  
                  UU.DData.IntSet        
-extensions:  RankNTypes FunctionalDependencies TypeSynonymInstances UndecidableInstances FlexibleInstances MultiParamTypeClasses FlexibleContexts CPP
+extensions:  RankNTypes FunctionalDependencies TypeSynonymInstances UndecidableInstances FlexibleInstances MultiParamTypeClasses FlexibleContexts CPP ExistentialQuantification
 hs-source-dirs: src

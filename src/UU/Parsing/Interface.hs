@@ -29,8 +29,7 @@ type Parser s = AnaParser [s] Pair s (Maybe s)
 -- | The 'IsParser' class contains the base combinators with which
 -- to write parsers. A minimal complete instance definition consists of
 -- definitions for '(<*>)', '(<|>)', 'pSucceed', 'pLow', 'pFail', 
--- 'pCostRange', 'pCostSym', 'getfirsts', 'setfirsts', 'getzerop' 
--- and 'setzerop'.
+-- 'pCostRange', 'pCostSym', 'getfirsts', 'setfirsts', and 'getzerop'.
 class  IsParser p s | p -> s where
   -- | Sequential composition. Often used in combination with <$>.
   -- The function returned by parsing the left-hand side is applied 

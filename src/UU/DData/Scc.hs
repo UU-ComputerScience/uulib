@@ -306,3 +306,4 @@ prop_SccConnected g
       = all (\y -> path x y g) xs
 
 -}
+
