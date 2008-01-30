@@ -6,7 +6,9 @@ help:
 	@echo Build system for the UU libraries
 	@echo Targets:
 	@echo
+	@echo build - builds uulib using cabal
 	@echo dist - Create source distributions
+	@echo source_tarball - Generate a snapshot of the repository
 
 MV        = @MV@
 RM        = @RM@
@@ -75,3 +77,16 @@ dist: dist_info dist_pack
 dist_info:
 	@echo "* Generating distributions..."
 
+source_tarball: source_tarball_info source_tarball_pack
+
+source_tarball_pack: dist_copy
+	$(MV) $(DLABEL) $(VLABEL)
+	$(TARCZVF) $(VTLABEL)$(TAREXT) $(VLABEL)
+
+source_tarball_info:
+	@echo "* Generating a snapshot..."
+
+build:
+	ghc --make Setup.hs -o setup
+	./setup configure
+	./setup build
