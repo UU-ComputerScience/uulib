@@ -7,8 +7,10 @@ help:
 	@echo Targets:
 	@echo
 	@echo build - builds uulib using cabal
+	@echo install - install uulib using cabal
 	@echo dist - Create source distributions
 	@echo source_tarball - Generate a snapshot of the repository
+	@echo cabal_dist - Generate a cabal distribution
 
 MV        = @MV@
 RM        = @RM@
@@ -17,6 +19,7 @@ CP        = @CP@
 FIND      = @FIND@
 MKDIR     = @MKDIR@
 VERSION   = @VERSION@
+PREFIX    = @prefix@
 
 
 # Directories
@@ -88,5 +91,15 @@ source_tarball_info:
 
 build:
 	ghc --make Setup.hs -o setup
-	./setup configure
+	./setup configure --prefix=$(PREFIX)
 	./setup build
+
+install: build
+	./setup install
+
+cabal_dist: build
+	./setup sdist
+
+check: build
+	cd test; ghc -fglasgow-exts -fallow-undecidable-instances --make -i.:../src Main.hs -o testprog
+	./test/testprog
