@@ -106,5 +106,5 @@ cabal_dist:
 	mv dist/uulib-*.tar.gz .
 
 check: build
-	ghc -fglasgow-exts -fallow-undecidable-instances --make -i.:../src Main.hs -o testprog
-	./test/testprog
+	ghc -fglasgow-exts -fallow-undecidable-instances --make -itest:src test/Main.hs -o testprog
+	./testprog
