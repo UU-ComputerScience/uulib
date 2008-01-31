@@ -1,4 +1,4 @@
-{-# OPTIONS_GHC -fglasgow-exts -XFlexibleContexts #-}
+{-# OPTIONS_GHC -fglasgow-exts -fallow-undecidable-instances #-}
 module Main where
 
 import UU.Parsing
