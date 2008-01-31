@@ -97,8 +97,11 @@ build:
 install: build
 	./setup install
 
-cabal_dist: build
+cabal_dist:
+	ghc --make Setup.hs -o setup
+	./setup configure --prefix=$(PREFIX)
 	./setup sdist
+	mv dist/uulib-*.tar.gz .
 
 check: build
 	cd test; ghc -fglasgow-exts -fallow-undecidable-instances --make -i.:../src Main.hs -o testprog
