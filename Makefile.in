@@ -43,11 +43,14 @@ endif
 
 # the name is hard-coded
 
+REVISION := $(shell cat svn-revision)
 TODAY  := $(shell date '+%Y-%m-%d')
 DLABEL := $(NAME)-$(TODAY)
 VLABEL := $(NAME)-$(VERSION)
 DTLABEL:= $(NAME)-$(TODAY)-$(DISTTYPE)
 VTLABEL:= $(NAME)-$(VERSION)-$(DISTTYPE)
+XLABEL := $(NAME)-$(VERSION)-rev$(REVISION)
+XTLABEL:= $(NAME)-$(VERSION)-rev$(REVISION)-$(DISTTYPE)
 
 dist_makedirs:
 	$(RM_F) -r $(DLABEL)
@@ -85,8 +88,8 @@ dist_info:
 source_tarball: source_tarball_info source_tarball_pack
 
 source_tarball_pack: dist_copy
-	$(MV) $(DLABEL) $(VLABEL)
-	$(TARCZVF) $(VTLABEL)$(TAREXT) $(VLABEL)
+	$(MV) $(DLABEL) $(XLABEL)
+	$(TARCZVF) $(XTLABEL)$(TAREXT) $(XLABEL)
 
 source_tarball_info:
 	@echo "* Generating a snapshot..."
