@@ -1,0 +1,65 @@
+This example consists of two parts:
+- Scanner.hs: generated with Alex from Scanner.x. Put your own regular
+expressions for your scanner there, and see the "haskell blocks" to the
+right of each regular expression for which functions to call to
+construct the right tokens. The rest is reusable junk code.
+
+- Example.hs: contains a parser for some basic expression language. I
+only used BNF-parsers (sequential <*> and alternative <$>) here. There
+are abstractions for EBNF-parsers, and actually, there is a huge amount
+of even more abstractions, but for those I always have to look inside
+the source files what their names are (bad bad bad documentation).
+
+The idea is that if you have a production:
+
+N -> S1 S2 S3 S4
+
+That you write it down as:
+
+pN :: TokenParser type
+pN = function <$> pS1 <*> pS2 <*> pS3 <*> pS4
+
+where the function gets values from parsing S1..S4 as parameters and
+returns a value of the type you gave as parameter to TokenParser:
+
+pN = (\v1 v2 v3 v4 -> ...) <$> pS1 <*> pS2 <*> pS3 <*> pS4
+
+if you have more than one production for a nonterminal, then you can write:
+
+pN =   parser-alternative-1
+   <|> parser-alternative-2
+   <|> ...
+
+Your parsers may be recursive, but they are not allowed to be left
+recursive. A parser is left recursive when you call itself again without
+having parsed a terminal first. For example, this one is recursive, but
+only left-recursive if p can parse the empty string (but then it would
+also be ambiguous because then you can't differentiate between p and pSucceed
+[]):
+
+pMany :: Parser a -> Parser [a]
+pMany p
+  =    (\x xs -> x : xs) <$> p <*> pMany p
+  <|>  pSucceed []
+
+In this case, pSucceed is a special parser which always succeeds and
+yields it's parameter as semantic result. Similarly, you have pFail
+which always fails (p <|> pFail === p).
+
+Finally, you'll need parsers that can actually do some parsing, i.e.
+parsers for terminals. Since your terminals in this case are tokens, you
+basically need one for each token type:
+
+For those tokens constructed with function "reserved":
+pKey :: String -> TokenParser String
+
+For those tokens constructed with function "valueToken TkVarid":
+pVarid :: TokenParser String
+
+and there are some others. If you want also the position of where these
+tokens were parsed, then you can use:
+
+pKeyPos :: String -> TokenParser Pos
+pVaridPos :: TokenParser (String, Pos)
+
+where data Pos = Pos Int Int String
