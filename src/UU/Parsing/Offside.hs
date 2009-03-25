@@ -75,6 +75,23 @@ scanOffside mod open close triggers ts = start ts []
         -- L  (t:ts)  (m:ms)  = }: (L  (t:ts)  ms)      if  m /= 0  and  parse-error(t) (Note  5) 
         -- L  (t:ts)  ms      = t : (L  ts ms) 
         sameln tts ms = case splitStateE tts of
+              Left'  t ts  ->
+                        let tail
+                              | isTrigger t  = aftertrigger ts ms
+                              | isClose t    = case ms of
+                                                         0:rs -> layout ts rs
+                                                         _    -> layout ts ms
+
+                              | isOpen t    = layout ts (0:ms)
+                              | otherwise   = layout ts ms
+                            parseError = case ms of
+                                           m:ms  | m /= 0 -> Just (layout tts ms)
+                                           _              -> Nothing
+                        in  Off pos (Cons (Symbol t) tail) parseError
+              Right' rest -> endofinput pos rest ms
+          where pos = getPosition tts
+{-
+        sameln tts ms = case splitStateE tts of
                 Left'  t ts  | isTrigger t -> cons pos (Symbol t) (aftertrigger ts ms)
                              | isClose t   -> cons pos (Symbol t) 
                                                 (case ms of
@@ -88,6 +105,7 @@ scanOffside mod open close triggers ts = start ts []
                                               in Off pos (Cons (Symbol t) (layout ts ms)) parseError
                 Right' rest -> endofinput pos rest ms
           where pos = getPosition tts                        
+-}
 
         -- L  []  []          = [] 
         -- L  []  (m:ms)      = } : L  []  ms           if m /=0   (Note  6) 
