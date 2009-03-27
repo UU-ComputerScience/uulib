@@ -236,10 +236,18 @@ pBlock1 :: (InputState i s p, OutputState o, Position p, Symbol s, Ord s)
        -> OffsideParser i o s p a 
        -> OffsideParser i o s p [a]
 pBlock1 open sep close p =  pOffside open close explicit implicit
+ where elem = (:) <$> p `opt` id
+       sep' = () <$ sep
+       elems s = (:) <$ pList s <*> p <*> (($[]) <$> pFoldr1Sep ((.),id) s elem)
+       explicit = elems sep'
+       implicit = elems (sep' <|> pSeparator)
+{-
+pBlock1 open sep close p =  pOffside open close explicit implicit
  where sep'    = () <$ sep
        elems s = pList s *> pList1Sep (pList1 s) p <* pList s
        explicit = elems sep'
        implicit = elems (sep' <|> pSeparator)
+-}
 
 parseOffside :: (Symbol s, InputState i s p, Position p) 
              => OffsideParser i Pair s p a 
