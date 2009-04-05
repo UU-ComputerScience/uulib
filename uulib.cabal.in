@@ -28,4 +28,9 @@ exposed-modules: UU.Parsing.CharParser UU.Parsing.Derived
                  UU.DData.IntSet        
 extensions:  RankNTypes FunctionalDependencies TypeSynonymInstances UndecidableInstances FlexibleInstances MultiParamTypeClasses FlexibleContexts CPP ExistentialQuantification
 hs-source-dirs: src
-extra-source-files: README, LICENSE-LGPL
+extra-source-files: README, LICENSE-LGPL,
+                    examples/bibtex/Bibtex.hs,
+                    examples/parser/Example.hs,
+                    examples/parser/Makefile,
+                    examples/parser/README,
+                    examples/parser/Scanner.x
