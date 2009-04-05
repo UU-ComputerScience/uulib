@@ -60,6 +60,16 @@ Installing uulib from the subversion repository
   you don't need to pass a path to configure, just follow
   the steps outlined above.
 
+Source tarball (uploadable to hackage)
+--------------------------------------
+
+  Use the "sdist" cabal command:
+
+    ghc --make Setup.hs -o setup -package Cabal
+    ./setup configure
+    ./setup sdist
+
+  You will find the tarball in the dist directory.
 
 Optionally generating Haddock Documentation
 -------------------------------------------
