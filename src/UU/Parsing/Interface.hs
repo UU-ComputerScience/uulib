@@ -5,6 +5,7 @@ module UU.Parsing.Interface
        , module UU.Parsing.Interface
        ) where
 
+import GHC.Prim
 import UU.Parsing.Machine
 import UU.Parsing.MachineInterface
 --import IOExts
@@ -66,11 +67,11 @@ class  IsParser p s | p -> s where
   -- | Parses a range of symbols with an associated cost and the symbol to
   -- insert if no symbol in the range is present. Returns the actual symbol
   -- parsed.
-  pCostRange   :: Int{-#L-} -> s -> SymbolR s -> p s
+  pCostRange   :: Int# -> s -> SymbolR s -> p s
   -- | Parses a symbol with an associated cost and the symbol to insert if
   -- the symbol to parse isn't present. Returns either the symbol parsed or
   -- the symbol inserted.
-  pCostSym     :: Int{-#L-} -> s -> s         -> p s
+  pCostSym     :: Int# -> s -> s         -> p s
   -- | Parses a symbol. Returns the symbol parsed.
   pSym         ::                   s         -> p s
   pRange       ::              s -> SymbolR s -> p s
@@ -78,8 +79,8 @@ class  IsParser p s | p -> s where
   getfirsts    :: p v -> Expecting s
   -- | Set the firsts set in the parser.
   setfirsts    :: Expecting s -> p v ->  p v
-  pSym a       =  pCostSym   5{-#L-} a a
-  pRange       =  pCostRange 5{-#L-}
+  pSym a       =  pCostSym   5# a a
+  pRange       =  pCostRange 5#
   -- | 'getzerop' returns @Nothing@ if the parser can not parse the empty
   -- string, and returns @Just p@ with @p@ a parser that parses the empty 
   -- string and returns the appropriate value.
@@ -120,7 +121,7 @@ instance (Ord s, Symbol s, InputState state s p, OutputState result) => IsParser
 instance InputState [s] s (Maybe s) where
  splitStateE []     = Right' []
  splitStateE (s:ss) = Left'  s ss
- splitState  (s:ss) = ({-#L-} s, ss{-L#-})
+ splitState  (s:ss) = (# s, ss #)
  getPosition []     = Nothing
  getPosition (s:ss) = Just s
 
@@ -130,7 +131,7 @@ instance OutputState Pair  where
   nextR       acc    = \ f   ~(Pair a r) -> acc  (f a) r  
   
 pCost :: (OutputState out, InputState inp sym pos, Symbol sym, Ord sym) 
-      => Int -> AnaParser inp out sym pos ()
+      => Int# -> AnaParser inp out sym pos ()
 pCost x = pMap f f' (pSucceed ())
   where f  acc inp steps = (inp, Cost x (val (uncurry acc) steps))
         f'     inp steps = (inp, Cost x steps)

@@ -1,12 +1,12 @@
 module UU.Scanner.GenTokenParser where
-
+import GHC.Prim
 import UU.Parsing.Interface(IsParser(pCostSym, pSym, (<$>)))
 import UU.Scanner.GenToken(GenToken(..))
 import UU.Scanner.Position(Pos, noPos)
 
 
 pCostReserved'          :: IsParser p (GenToken key tp val) 
-                        => Int -> key -> p (GenToken key tp val)
+                        => Int# -> key -> p (GenToken key tp val)
 pCostReserved' c key    =  let tok = Reserved key noPos 
                            in  pCostSym c tok tok 
 
@@ -16,7 +16,7 @@ pReserved' key          =  let tok = Reserved key noPos
                            in  pSym tok 
 
 pCostValToken'          :: IsParser p (GenToken key tp val) 
-                        => Int -> tp -> val -> p (GenToken key tp val)
+                        => Int# -> tp -> val -> p (GenToken key tp val)
 pCostValToken' c tp val =  let tok = ValToken tp val noPos 
                            in  pCostSym c tok tok 
 
@@ -27,14 +27,14 @@ pValToken' tp val       =  let tok = ValToken tp val noPos
 
 
 pCostReserved           :: IsParser p (GenToken key tp val) 
-                        => Int -> key -> p Pos
+                        => Int# -> key -> p Pos
 pCostReserved c key     =  let getPos x = case x of
                                 Reserved _   p -> p
                                 ValToken _ _ p -> p
                            in getPos <$> pCostReserved' c key
                           
 pCostValToken           :: IsParser p (GenToken key tp val) 
-                        => Int -> tp -> val -> p (val,Pos)
+                        => Int# -> tp -> val -> p (val,Pos)
 pCostValToken c tp val  =  let getVal x = case x of
                                 ValToken _ v p -> (v,p)
                                 _              -> error "pValToken: cannot get value of Reserved"
@@ -42,11 +42,11 @@ pCostValToken c tp val  =  let getVal x = case x of
 
 pReserved               :: IsParser p (GenToken key tp val) 
                         => key -> p Pos
-pReserved               =  pCostReserved 5 
+pReserved               =  pCostReserved 5# 
 
 pValToken               :: IsParser p (GenToken key tp val) 
                         => tp -> val -> p (val,Pos)
-pValToken               =  pCostValToken 5
+pValToken               =  pCostValToken 5#
 
 pValTokenNoPos          :: IsParser p (GenToken key tp val) 
                         => tp -> val -> p val

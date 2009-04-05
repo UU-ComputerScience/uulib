@@ -1,4 +1,7 @@
+
+
 module UU.Parsing.MachineInterface where
+import GHC.Prim
 
 -- | The 'InputState' class contains the interface that the AnaParser
 -- parsers expect for the input. A minimal complete instance definition
@@ -8,7 +11,7 @@ class InputState state s pos | state -> s, state -> pos where
  --   can be split off and 'Right'' if none can
  splitStateE :: state             -> Either' state s
  -- | Splits the state in the first symbol and the remaining state
- splitState  :: state             -> ({-#L-} s, state  {-L#-})
+ splitState  :: state             -> (# s, state #)
  -- | Gets the current position in the input
  getPosition :: state             -> pos
  -- | Reports an error
@@ -36,10 +39,10 @@ class OutputState r  where
   {-# INLINE nextR   #-}
 
 class Symbol s where
- deleteCost :: s -> Int{-#L-}
+ deleteCost :: s -> Int#
  symBefore  :: s -> s
  symAfter   :: s -> s
- deleteCost b = 5{-#L-}
+ deleteCost b = 5#
  symBefore  = error "You should have made your token type an instance of the Class Symbol. eg by defining symBefore = pred"
  symAfter   = error "You should have made your token type an instance of the Class Symbol. eg by defining symAfter  = succ"
 
@@ -52,8 +55,8 @@ data Either' state s = Left' !s (state )
 data Steps val s p 
              = forall a . OkVal           (a -> val)                                (Steps a   s p)
              |            Ok         {                                       rest :: Steps val s p}
-             |            Cost       {costing::Int{-#L-}                   , rest :: Steps val s p}
-             |            StRepair   {costing::Int{-#L-}, m :: !(Message s p) , rest :: Steps val s p}
+             |            Cost       {costing::Int#                        , rest :: Steps val s p}
+             |            StRepair   {costing::Int#  , m :: !(Message s p) , rest :: Steps val s p}
              |            Best       (Steps val s p) (Steps val s p) ( Steps val s p)
              |            NoMoreSteps val
 data Action s  =  Insert s

@@ -1,4 +1,5 @@
 module UU.Parsing.Machine where
+import GHC.Prim
 import UU.Util.BinaryTrees 
 import UU.Parsing.MachineInterface
 
@@ -47,10 +48,10 @@ parsebasic eof (pp) inp
 libAccept :: (OutputState a, InputState b s p) => ParsRec b a s p s
 libAccept            = mkPR (P (\ acc k state ->
                                 case splitState state of
-                                ({-#L-} s, ss {-L#-})  -> OkVal (acc s) (k ss))
+                                (# s, ss #)  -> OkVal (acc s) (k ss))
                             ,R (\ k state ->
                                 case splitState state of
-                                ({-#L-} s, ss {-L#-})  ->   Ok (k ss))
+                                (# s, ss #)  ->   Ok (k ss))
                             )
 libInsert  c sym  firsts =mkPR( P (\acc k state ->  let msg = Msg  firsts 
                                                                      (getPosition state)
@@ -155,9 +156,9 @@ libBest' _            (OkVal w rs) lf rf = OkVal (rf.w) rs
 libBest' (Ok      ls) _            lf rf = OkVal lf ls           
 libBest' _            (Ok      rs) lf rf = OkVal rf rs   
 libBest' l@(Cost i ls ) r@(Cost j rs ) lf rf
- | i =={-#L-} j = Cost i (libBest' ls rs lf rf)
- | i <{-#L-} j  = Cost i (val lf ls)
- | i >{-#L-} j  = Cost j (val rf rs)
+ | i ==# j = Cost i (libBest' ls rs lf rf)
+ | i <# j  = Cost i (val lf ls)
+ | i ># j  = Cost j (val rf rs)
 libBest' l@(NoMoreSteps v) _                 lf rf = NoMoreSteps (lf v)
 libBest' _                 r@(NoMoreSteps w) lf rf = NoMoreSteps (rf w)
 libBest' l@(Cost i ls)     _                 lf rf = Cost i (val lf ls)
@@ -170,31 +171,31 @@ lib_correct p q = \k inp -> libCorrect (p k inp) ( q k inp) id id
 libCorrect :: Ord s => Steps a s p -> Steps c s p -> (a -> d) -> (c -> d) -> Steps d s p
 libCorrect ls rs lf rf
  =  let (ToBeat _ choice) = traverse 
-                            (traverse (ToBeat 999{-#L-} (val lf newleft)) 
-                                  (val lf, newleft,  0{-#L-}) 4{-#L-})
-                                  (val rf, newright, 0{-#L-}) 4{-#L-} 
+                            (traverse (ToBeat 999# (val lf newleft)) 
+                                  (val lf, newleft)  0# 4#)
+                                  (val rf, newright) 0# 4# 
         newleft    = addexpecting (starting rs) ls
         newright   = addexpecting (starting ls) rs
     in Best (val lf newleft)
             choice
             (val rf newright)
 
-data ToBeat a = ToBeat Int{-#L-} a
+data ToBeat a = ToBeat Int# a
 
-traverse :: ToBeat (Steps a s p) -> (Steps v s p -> Steps a s p, Steps v s p, Int{-L#-}) -> Int{-L#-} -> ToBeat (Steps a s p)
-traverse b@(ToBeat bv br) (f, s, v)              0{-#L-} = {- trace ("comparing " ++ show bv ++ " with " ++ show v ++ "\n") $ -}
-                                                           if bv <={-#L-} v 
+traverse :: ToBeat (Steps a s p) -> (Steps v s p -> Steps a s p, Steps v s p) ->  Int#  -> Int# -> ToBeat (Steps a s p)
+traverse b@(ToBeat bv br) (f, s) v                  0#  = {- trace ("comparing " ++ show bv ++ " with " ++ show v ++ "\n") $ -}
+                                                           if bv <=# v 
                                                            then b 
                                                            else ToBeat v (f s)
-traverse b@(ToBeat bv br) (f, Ok      l, v)            n = {- trace ("adding" ++ show n ++ "\n") $-} traverse b (f.Ok     , l, v - n + 4) (n -{-#L-} 1{-#L-})
-traverse b@(ToBeat bv br) (f, OkVal w l, v)            n = {- trace ("adding" ++ show n ++ "\n") $-} traverse b (f.OkVal w, l, v - n + 4) (n -{-#L-} 1{-#L-})
-traverse b@(ToBeat bv br) (f, Cost i  l, v)            n = if i +{-#L-} v >={-#L-} bv 
+traverse b@(ToBeat bv br) (f, Ok      l) v             n = {- trace ("adding" ++ show n ++ "\n") $-} traverse b (f.Ok     , l) (v -# n +# 4#) (n -# 1#)
+traverse b@(ToBeat bv br) (f, OkVal w l) v             n = {- trace ("adding" ++ show n ++ "\n") $-} traverse b (f.OkVal w, l) (v -# n +# 4#) (n -# 1#)
+traverse b@(ToBeat bv br) (f, Cost i  l) v             n = if i +# v >=# bv 
                                                            then b 
-                                                           else traverse b (f.Cost i, l, i +{-#L-} v) n
-traverse b@(ToBeat bv br) (f, Best l _ r, v)           n = traverse (traverse b (f, l, v) n) (f, r, v) n
-traverse b@(ToBeat bv br) (f, StRepair i msgs r, v)    n = if i +{-#L-} v >={-#L-} bv then b 
-                                                           else traverse b (f.StRepair i msgs, r, i +{-#L-} v) (n -{-#L-} 1{-#L-})
-traverse b@(ToBeat bv br) (f, t@(NoMoreSteps _), v)    n = if bv <={-#L-} v then b else ToBeat v (f t)
+                                                           else traverse b (f.Cost i, l) (i +# v) n
+traverse b@(ToBeat bv br) (f, Best l _ r) v            n = traverse (traverse b (f, l) v n) (f, r) v n
+traverse b@(ToBeat bv br) (f, StRepair i msgs r) v     n = if i +# v >=# bv then b 
+                                                           else traverse b (f.StRepair i msgs, r) (i +# v) (n -# 1#)
+traverse b@(ToBeat bv br) (f, t@(NoMoreSteps _)) v     n = if bv <=# v then b else ToBeat v (f t)
 -- =======================================================================================
 -- ===== DESCRIPTORS =====================================================================
 -- =======================================================================================
@@ -324,10 +325,10 @@ mkParser length zd ~descr@(OneDescr firsts tab) -- pattern matching should be la
                insertsyms = head [   getp (pr firsts)| (_ , TableEntry _ pr) <- tab    ]
                correct k inp
                  = case splitState inp of
-                       ({-#L-} s, ss {-L#-}) -> let { msg = Msg firsts (getPosition inp) (Delete s)
-                                                    ; newinp = deleteSymbol s (reportError msg ss)
-                                                    }
-                                                in libCorrect (StRepair (deleteCost s) msg (result k newinp))
+                       (# s, ss #) -> let { msg = Msg firsts (getPosition inp) (Delete s)
+                                          ; newinp = deleteSymbol s (reportError msg ss)
+                                          }
+                                      in libCorrect (StRepair (deleteCost s) msg (result k newinp))
                                                               (insertsyms k inp) id id
                result = if null tab then zerop
                         else case zd of

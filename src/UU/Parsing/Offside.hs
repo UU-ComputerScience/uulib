@@ -12,6 +12,7 @@ module UU.Parsing.Offside( parseOffside
                          , OffsideParser(..)
                          ) where
                          
+import GHC.Prim
 import UU.Parsing.Interface
 import UU.Parsing.Machine
 import UU.Parsing.Derived(opt, pFoldr1Sep,pList,pList1, pList1Sep)
@@ -126,16 +127,16 @@ instance InputState inp s p => InputState (OffsideInput inp s p) (OffsideSymbol 
                                      _           -> Right' inp                                 
   splitState (Off _ stream _) = 
            case stream of
-            Cons s rest -> (s ,rest)                        
+            Cons s rest -> (# s ,rest #)                        
 
   getPosition (Off pos _ _ ) = pos
   
 instance Symbol s => Symbol (OffsideSymbol s) where
   deleteCost s = case s of
                   Symbol s   -> deleteCost s
-                  SemiColon  -> 5
-                  OpenBrace  -> 5
-                  CloseBrace -> 5
+                  SemiColon  -> 5#
+                  OpenBrace  -> 5#
+                  CloseBrace -> 5#
   symBefore s = case s of
                  Symbol s   -> Symbol (symBefore s)
                  SemiColon  -> error "Symbol.symBefore SemiColon"
@@ -188,7 +189,7 @@ operatorr f g (OP p) = OP (f g p)
 
 pSeparator :: (OutputState o, InputState i s p, Position p, Symbol s, Ord s) 
            => OffsideParser i o s p ()
-pSeparator = OP (() <$ pCostSym 5 SemiColon SemiColon)
+pSeparator = OP (() <$ pCostSym 5# SemiColon SemiColon)
 
 pClose, pOpen :: (OutputState o, InputState i s p, Position p, Symbol s, Ord s) 
            => OffsideParser i o s p ()

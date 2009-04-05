@@ -1,4 +1,5 @@
 module UU.Parsing.StateParser(StateParser(..)) where
+import GHC.Prim
 import UU.Parsing.MachineInterface
 import UU.Parsing.Machine(AnaParser, ParsRec(..),RealParser(..),RealRecogn(..), mkPR, anaDynE)
 
@@ -7,7 +8,7 @@ instance (InputState inp s p) => InputState (inp, state) s p where
                   Left'   x xs   -> Left'  x (xs, st)
                   Right'  xs     -> Right'   (xs, st)
   splitState  (inp, st) = case splitState inp of
-                  (x,xs) -> (x, (xs, st))
+                  (# x,xs #) -> (# x, (xs, st) #)
   getPosition (inp, _) = getPosition inp
 
 class StateParser p st | p -> st where

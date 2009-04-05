@@ -11,7 +11,7 @@ synopsis: Haskell Utrecht Tools Library
 category: Parsing
 stability: Stable
 copyright: Universiteit Utrecht
-build-depends: base, haskell98
+build-depends: base, haskell98, ghc-prim
 exposed-modules: UU.Parsing.CharParser UU.Parsing.Derived
                  UU.Parsing.Interface UU.Parsing.MachineInterface
                  UU.Parsing.Merge UU.Parsing.Offside UU.Parsing.Perms
@@ -27,6 +27,7 @@ exposed-modules: UU.Parsing.CharParser UU.Parsing.Derived
                  UU.DData.IntMap  
                  UU.DData.IntSet        
 extensions:  RankNTypes FunctionalDependencies TypeSynonymInstances UndecidableInstances FlexibleInstances MultiParamTypeClasses FlexibleContexts CPP ExistentialQuantification
+ghc-options: -fglasgow-exts
 hs-source-dirs: src
 extra-source-files: README, LICENSE-LGPL,
                     examples/bibtex/Bibtex.hs,
