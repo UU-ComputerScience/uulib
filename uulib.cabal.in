@@ -11,6 +11,12 @@ synopsis: Haskell Utrecht Tools Library
 category: Parsing
 stability: Stable
 copyright: Universiteit Utrecht
+extra-source-files: README, LICENSE-LGPL,
+                    examples/bibtex/Bibtex.hs,
+                    examples/parser/Example.hs,
+                    examples/parser/Makefile,
+                    examples/parser/README,
+                    examples/parser/Scanner.x
 flag have_ghc_prim
   description: ghc-prim as separate module
 library
@@ -36,9 +42,4 @@ library
   extensions:  RankNTypes FunctionalDependencies TypeSynonymInstances UndecidableInstances FlexibleInstances MultiParamTypeClasses FlexibleContexts CPP ExistentialQuantification
   ghc-options: -fglasgow-exts
   hs-source-dirs: src
-  extra-source-files: README, LICENSE-LGPL,
-                      examples/bibtex/Bibtex.hs,
-                      examples/parser/Example.hs,
-                      examples/parser/Makefile,
-                      examples/parser/README,
-                      examples/parser/Scanner.x
+
