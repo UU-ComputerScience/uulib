@@ -57,7 +57,6 @@ dist_makedirs:
 	$(RM_F) -r $(VLABEL)
 	$(MKDIR) -p $(DLABEL)
 	$(MKDIR) -p $(DLABEL)/test
-	$(MKDIR) -p $(DLABEL)/example-parser
 	$(MKDIR) -p $(DLABEL)/examples
 	for dir in `$(FIND) $(SRC_DIR) -type d -not -path '*/.svn*'`; do $(MKDIR) -p $(DLABEL)/$${dir}; done
 
@@ -73,8 +72,7 @@ dist_copy: dist_makedirs $(SRC_HS_SEM) $(SRC_HS_SYN)
 		 uulib.cabal.in \
 		 Setup.hs \
 		 $(DLABEL)
-	$(CP) -p example-parser/* $(DLABEL)/example-parser/
-	$(CP) -p examples/* $(DLABEL)/examples/
+	$(CP) -rp examples/* $(DLABEL)/examples/
 	$(CP) -p test/Main.hs $(DLABEL)/test/Main.hs
 # populate sources
 	for file in `$(FIND) $(SRC_DIR) -name '*.hs' -type f -not -path '*/.svn*'`; do $(CP) -p $${file} $(DLABEL)/$${file}; done
