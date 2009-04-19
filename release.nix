@@ -30,7 +30,7 @@ let
 
       haskellPackages.cabal.mkDerivation (self: {
         pname = "uulib";
-        version = "1.2.3";
+        version = "head";
         src = "${tarball}/tarballs/*.tar.gz";
       });
   };
