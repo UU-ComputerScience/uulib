@@ -28,17 +28,14 @@ library
   exposed-modules: UU.Parsing.CharParser UU.Parsing.Derived
                    UU.Parsing.Interface UU.Parsing.MachineInterface
                    UU.Parsing.Merge UU.Parsing.Offside UU.Parsing.Perms
-                   UU.Parsing.StateParser UU.Parsing UU.DData.IntBag 
-                   UU.DData.Map UU.DData.MultiSet UU.DData.Queue
-                   UU.DData.Scc UU.DData.Seq UU.DData.Set UU.PPrint
+                   UU.Parsing.StateParser UU.Parsing
+                   UU.PPrint
                    UU.Pretty.Ext UU.Pretty UU.Scanner.GenToken UU.Scanner.GenTokenOrd
                    UU.Scanner.GenTokenParser UU.Scanner.GenTokenSymbol
                    UU.Scanner.Position UU.Scanner.Scanner
                    UU.Scanner.Token UU.Scanner.TokenParser UU.Scanner.TokenShow
                    UU.Scanner UU.Util.BinaryTrees UU.Util.PermTree UU.Util.Utils
                    UU.Pretty.Basic UU.Parsing.Machine    
-                   UU.DData.IntMap  
-                   UU.DData.IntSet        
   extensions:  RankNTypes FunctionalDependencies TypeSynonymInstances UndecidableInstances FlexibleInstances MultiParamTypeClasses FlexibleContexts CPP ExistentialQuantification
   ghc-options: -fglasgow-exts
   hs-source-dirs: src
