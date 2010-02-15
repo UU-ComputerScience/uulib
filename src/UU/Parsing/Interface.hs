@@ -11,6 +11,7 @@ import UU.Parsing.MachineInterface
 --import IOExts
 import System.IO.Unsafe
 import System.IO
+{- 20100215 AD debug: -} import Debug.Trace
 -- ==================================================================================
 -- ===== PRIORITIES ======================================================================
 -- =======================================================================================
@@ -118,10 +119,10 @@ instance (Ord s, Symbol s, InputState state s p, OutputState result) => IsParser
   getonep   p = let tab = table (onep p)
                 in if null tab then Nothing else Just (mkParser (leng p) Nothing (onep p))
 
-instance InputState [s] s (Maybe s) where
+instance {- 20100215 AD debug (Show s): -} Show s => InputState [s] s (Maybe s) where
  splitStateE []     = Right' []
- splitStateE (s:ss) = Left'  s ss
- splitState  (s:ss) = (# s, ss #)
+ splitStateE (s:ss) = {- 20100215 AD debug: -} {- -} trace (show s) $ Left'  s ss
+ splitState  (s:ss) = (# {- -} trace (show s) s, ss #)
  getPosition []     = Nothing
  getPosition (s:ss) = Just s
 
