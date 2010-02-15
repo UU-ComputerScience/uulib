@@ -7,16 +7,18 @@ module UU.Parsing.Offside( parseOffside
                          , pSeparator 
                          , scanOffside 
                          , OffsideSymbol(..)
-                         , OffsideInput
-                         , Stream
+                         , OffsideInput(..)
+                         , Stream(..)
                          , OffsideParser(..)
                          ) where
                          
 import GHC.Prim
+import Data.Maybe
 import UU.Parsing.Interface
 import UU.Parsing.Machine
 import UU.Parsing.Derived(opt, pFoldr1Sep,pList,pList1, pList1Sep)
 import UU.Scanner.Position
+import UU.Parsing.TraceWrap {- 20100215 AD debug: -}
 
 data OffsideSymbol s = 
                 Symbol s
@@ -123,11 +125,18 @@ data OffsideInput inp s p = Off p (Stream inp s p) (Maybe (OffsideInput inp s p)
 
 instance InputState inp s p => InputState (OffsideInput inp s p) (OffsideSymbol s) p where
   splitStateE inp@(Off p stream _) = case stream of
-                                     Cons s rest -> Left' s rest
+                                     Cons s rest -> {- 20100215 AD debug: -} {- wtrace ("Offside  .splitStateE: " ++ show s ++ ", rest: " ++ show (take 2 rest)) $ -}
+                                                    Left' s rest
+                                                 where take 0 _                    = []
+                                                       take _ (Off _ (End _) _)    = []
+                                                       take n (Off _ (Cons h t) _) = h : take (n-1) t
                                      _           -> Right' inp                                 
   splitState (Off _ stream _) = 
            case stream of
-            Cons s rest -> (# s ,rest #)                        
+            Cons s rest -> (# {- 20100215 AD debug: -} {- wtrace ("Offside  .splitState : " ++ show s) -}
+                              s
+                            , rest
+                            #)
 
   getPosition (Off pos _ _ ) = pos
   
@@ -140,7 +149,7 @@ instance Symbol s => Symbol (OffsideSymbol s) where
   symBefore s = case s of
                  Symbol s   -> Symbol (symBefore s)
                  SemiColon  -> error "Symbol.symBefore SemiColon"
-                 OpenBrace  -> error "Symbol.symBeforeOpenBrace"
+                 OpenBrace  -> error "Symbol.symBefore OpenBrace"
                  CloseBrace -> error "Symbol.symBefore CloseBrace"
   symAfter s = case s of
                  Symbol s   -> Symbol (symAfter s)
@@ -236,12 +245,28 @@ pBlock1 :: (InputState i s p, OutputState o, Position p, Symbol s, Ord s)
        -> OffsideParser i o s p z 
        -> OffsideParser i o s p a 
        -> OffsideParser i o s p [a]
+{-
+pBlock1 open sep close p =  pOffside open close explicit implicit
+ where elem = (Just <$> p) <|> pSucceed Nothing
+       sep' = () <$ sep
+       elems s = (\h t -> catMaybes (h:t)) <$ pList s <*> (Just <$> p) <*> pList ( s *> elem)
+       explicit = elems sep'
+       implicit = elems (sep' <|> pSeparator)
+-}
+pBlock1 open sep close p =  pOffside open close explicit implicit
+ where elem = (Just <$> p) `opt` Nothing
+       sep' = () <$ sep
+       elems s = (\h t -> catMaybes (h:t)) <$ pList s <*> (Just <$> p) <*> pList ( s *> elem)
+       explicit = elems sep'
+       implicit = elems (sep' <|> pSeparator)
+{-
 pBlock1 open sep close p =  pOffside open close explicit implicit
  where elem = (:) <$> p `opt` id
        sep' = () <$ sep
        elems s = (:) <$ pList s <*> p <*> (($[]) <$> pFoldr1Sep ((.),id) s elem)
        explicit = elems sep'
        implicit = elems (sep' <|> pSeparator)
+-}
 {-
 pBlock1 open sep close p =  pOffside open close explicit implicit
  where sep'    = () <$ sep

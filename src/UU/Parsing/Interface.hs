@@ -11,7 +11,8 @@ import UU.Parsing.MachineInterface
 --import IOExts
 import System.IO.Unsafe
 import System.IO
-import Debug.Trace{- 20100215 AD debug: -} 
+import UU.Parsing.TraceWrap {- 20100215 AD debug: -}
+
 -- ==================================================================================
 -- ===== PRIORITIES ======================================================================
 -- =======================================================================================
@@ -121,8 +122,8 @@ instance (Ord s, Symbol s, InputState state s p, OutputState result) => IsParser
 
 instance {- 20100215 AD debug (Show s): -} Show s => InputState [s] s (Maybe s) where
  splitStateE []     = Right' []
- splitStateE (s:ss) = {- 20100215 AD debug: -} {- -} trace (show s) $ Left'  s ss
- splitState  (s:ss) = (# {- -} trace (show s) s, ss #)
+ splitStateE (s:ss) = {- 20100215 AD debug: -} {- -} wtrace ("Interface.splitStateE: " ++ show s) $ Left'  s ss
+ splitState  (s:ss) = (# {- -} wtrace ("Interface.splitState : " ++ show s) s, ss #)
  getPosition []     = Nothing
  getPosition (s:ss) = Just s
 

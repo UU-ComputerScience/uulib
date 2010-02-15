@@ -6,7 +6,7 @@ dnl Parts borrowed from Generic Haskell's configure script
 AC_INIT(VERSION)
 
 # Safety check: Ensure that we are in the correct source directory.
-AC_CONFIG_SRCDIR([uulib-debug.cabal.in])
+AC_CONFIG_SRCDIR([uulib.cabal.in])
 
 AC_PATH_PROG(CUT,cut)
 
@@ -44,4 +44,4 @@ AC_SUBST(FULLVERSION)
 AC_SUBST(VERSION)
 
 
-AC_OUTPUT(Makefile uulib-debug.cabal)
+AC_OUTPUT(Makefile uulib.cabal)

@@ -6,7 +6,7 @@ import GHC.Prim
 -- | The 'InputState' class contains the interface that the AnaParser
 -- parsers expect for the input. A minimal complete instance definition
 -- consists of 'splitStateE', 'splitState' and 'getPosition'.
-class InputState state s pos | state -> s, state -> pos where
+class {- 20100215 AD debug (Show s): -} Show s => InputState state s pos | state -> s, state -> pos where
  -- | Splits the state in a strict variant of 'Either', with 'Left'' if a symbol
  --   can be split off and 'Right'' if none can
  splitStateE :: state             -> Either' state s
