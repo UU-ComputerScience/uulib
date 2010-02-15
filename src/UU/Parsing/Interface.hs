@@ -11,7 +11,7 @@ import UU.Parsing.MachineInterface
 --import IOExts
 import System.IO.Unsafe
 import System.IO
-{- 20100215 AD debug: -} import Debug.Trace
+import Debug.Trace{- 20100215 AD debug: -} 
 -- ==================================================================================
 -- ===== PRIORITIES ======================================================================
 -- =======================================================================================
