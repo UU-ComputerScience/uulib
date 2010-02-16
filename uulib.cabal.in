@@ -21,7 +21,7 @@ flag have_ghc_prim
   description: ghc-prim as separate module
 library
   if flag(have_ghc_prim)
-    build-depends: base>=4, ghc-prim
+    build-depends: base>=4 && <10, ghc-prim
   else
     build-depends: base<4
   build-depends: haskell98
