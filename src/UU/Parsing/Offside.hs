@@ -7,6 +7,7 @@ module UU.Parsing.Offside( parseOffside
                          , pSeparator 
                          , scanOffside
                          , scanOffsideWithTriggers
+                         , scanLiftTokensToOffside
                          , OffsideTrigger(..)
                          , OffsideSymbol(..)
                          , OffsideInput
@@ -46,6 +47,16 @@ data OffsideInput inp s p
         (Stream inp s p)                    -- input stream
         (Maybe (OffsideInput inp s p))      -- next in stack of nested OffsideInput's
 
+-- | plainly lift tokens to offside tokens
+-- scanLiftTokensToOffside :: (InputState i s p) => [i] -> OffsideInput i s p -> OffsideInput i s p
+scanLiftTokensToOffside ts rest
+  = lift ts
+  where cons p s r =  Off p (Cons (Symbol s) r) Nothing 
+        lift tss = case splitStateE tss of
+                     Left' t ts -> cons (getPosition tss) t (lift ts)
+                     _          -> rest
+
+-- | convert tokens to offside tokens, dealing with Haskell's layout rule
 scanOffside :: (InputState i s p, Position p, Eq s) 
             =>  s ->  s -> s -> [s] -> i -> OffsideInput i s p  
 scanOffside mod open close triggers ts
