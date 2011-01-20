@@ -1,3 +1,7 @@
+{-# LANGUAGE  MagicHash,
+              UnboxedTuples,
+              ScopedTypeVariables #-}
+
 module UU.Parsing.StateParser(StateParser(..)) where
 import GHC.Prim
 import UU.Parsing.MachineInterface

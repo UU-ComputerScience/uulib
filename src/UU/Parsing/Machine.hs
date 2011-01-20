@@ -1,3 +1,7 @@
+{-# LANGUAGE  MagicHash,
+              UnboxedTuples,
+              ScopedTypeVariables #-}
+
 module UU.Parsing.Machine where
 import GHC.Prim
 import UU.Util.BinaryTrees 

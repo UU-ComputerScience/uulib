@@ -1,3 +1,7 @@
+{-# LANGUAGE  MagicHash,
+              UnboxedTuples,
+              ScopedTypeVariables #-}
+
 module UU.Parsing.Offside( parseOffside 
                          , pBlock 
                          , pBlock1 

@@ -1,4 +1,5 @@
-
+{-# LANGUAGE  MagicHash,
+              UnboxedTuples #-}
 
 module UU.Parsing.MachineInterface where
 import GHC.Prim

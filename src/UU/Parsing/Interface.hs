@@ -1,4 +1,7 @@
-{-# OPTIONS -fglasgow-exts  #-}
+{-# LANGUAGE  MagicHash,
+              UnboxedTuples,
+              ScopedTypeVariables #-}
+
 module UU.Parsing.Interface 
        ( AnaParser, pWrap, pMap
        , module UU.Parsing.MachineInterface

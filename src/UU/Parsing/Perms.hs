@@ -1,4 +1,5 @@
-{-# OPTIONS -fglasgow-exts  #-}
+{-# LANGUAGE ScopedTypeVariables #-}
+
 module UU.Parsing.Perms(Perms(), pPerms, pPermsSep, succeedPerms, (~*~), (~$~)) where
 
 import UU.Parsing
@@ -49,9 +50,9 @@ pPerms (Perms (empty,nonempty))
 
 pPermsSep :: IsParser p s => p x -> Perms p a -> p a
 pPermsSep (sep :: p z) perm = p2p (pSucceed ()) perm
- where  p2p :: IsParser p s => p x -> Perms p a -> p a
+ where  p2p ::  p () -> Perms p a -> p a
         p2p fsep (Perms (mbempty, nonempties)) = 
                 let empty          = fromMaybe  pFail mbempty
-                    pars (Br t p)  = flip ($) <$ fsep <*> p <*> p2p sep t
+                    pars (Br t p)  = flip ($) <$ fsep <*> p <*> p2p_sep t
                 in foldr (<|>) empty (map pars nonempties)              
-        p2p_sep =  p2p sep                   
+        p2p_sep =  p2p (()<$ sep)                                    
