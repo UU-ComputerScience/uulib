@@ -37,6 +37,6 @@ library
                    UU.Scanner UU.Util.BinaryTrees UU.Util.PermTree UU.Util.Utils
                    UU.Pretty.Basic UU.Parsing.Machine    
   extensions:  RankNTypes FunctionalDependencies TypeSynonymInstances UndecidableInstances FlexibleInstances MultiParamTypeClasses FlexibleContexts CPP ExistentialQuantification
-  ghc-options: -fglasgow-exts
+  ghc-options: -O0
   hs-source-dirs: src
 

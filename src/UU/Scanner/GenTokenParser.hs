@@ -1,3 +1,7 @@
+{-# LANGUAGE  MagicHash,
+              UnboxedTuples,
+              ScopedTypeVariables #-}
+
 module UU.Scanner.GenTokenParser where
 import GHC.Base
 import UU.Parsing.Interface(IsParser(pCostSym, pSym, (<$>)))
