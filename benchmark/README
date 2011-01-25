@@ -1,0 +1,4 @@
+cabal configure --enable-executable-profiling
+cabal build
+./dist/build/uulib-benchmark/uulib-benchmark +RTS -A2M -H512M -k64k -RTS -- --samples=20
+./dist/build/uulib-benchmark/uulib-benchmark +RTS -A2M -H512M -k64k -prof -RTS -- --samples=20
