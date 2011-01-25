@@ -28,17 +28,20 @@ class InputState state s pos | state -> s, state -> pos where
  -- It should normally not be deleted from the state.
  deleteSymbol :: s                -> state -> state
  deleteSymbol _ = id
- {-# INLINE splitStateE #-}
+ {-
+{-# INLINE splitStateE #-}
  {-# INLINE splitState  #-}
  {-# INLINE insertSymbol  #-}
  {-# INLINE deleteSymbol  #-}
+-}
 
 class OutputState r  where
   acceptR      ::                     v                   -> rest        -> r v rest
   nextR        ::  (a -> rest  -> rest') -> (b -> a)      -> (r b rest)  -> rest'
-  {-# INLINE acceptR #-}
+{-
+{-# INLINE acceptR #-}
   {-# INLINE nextR   #-}
-
+-}
 class Symbol s where
  deleteCost :: s -> Int#
  symBefore  :: s -> s

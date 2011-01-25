@@ -66,6 +66,7 @@ libInsert  c sym  firsts =mkPR( P (\acc k state ->  let msg = Msg  firsts
                                                                      (Insert sym)       
                                                     in StRepair c msg (k (insertSymbol sym (reportError msg state))))
                               )
+{-
 {-# INLINE libSeq  #-}
 {-# INLINE libSeqL #-}
 {-# INLINE libSeqR #-}
@@ -73,6 +74,7 @@ libInsert  c sym  firsts =mkPR( P (\acc k state ->  let msg = Msg  firsts
 {-# INLINE libDollarL #-}
 {-# INLINE libDollarR #-}
 {-# INLINE libSucceed #-}
+-}
 
 libSucceed v                                 =mkPR( P (\ acc -> let accv = val (acc v) in {-# SCC "machine" #-} \ k state -> accv (k state))
                                                   , R id
@@ -111,7 +113,10 @@ starting (StRepair _ m _ ) = getStart m
 starting (Best l _  _ )    = starting l
 starting _                 = systemerror "UU.Parsing.Machine" "starting"
 
+{-
 {-# INLINE hasSuccess #-}
+-}
+
 hasSuccess :: Steps a s p -> Bool
 hasSuccess (StRepair _ _ _ ) = False
 hasSuccess (Best     _ _ _ ) = False 
@@ -247,8 +252,9 @@ anaOr ld@(AnaParser _ ll zl ol)  rd@(AnaParser _ lr zr or)
                                     }                      }
          newOneDescr   =  maybeswap orOneOneDescr ol or False
 
+{-
 {-# INLINE anaSeq #-}
-
+-}
 anaSeq libdollar libseq comb (AnaParser  pl ll zl ol)  ~rd@(AnaParser pr lr zr or)
  = case zl of
    Just (b, zp ) -> let newZeroDescr = seqZeroZero zl zr   libdollar libseq comb
