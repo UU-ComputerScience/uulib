@@ -1,8 +1,8 @@
 module UU.Scanner.Scanner where
 
-import Char(isLower, isUpper, isSpace, isAlphaNum, isDigit, chr, ord)
-import List(sort)
-import Maybe(isJust)
+import Data.Char(isLower, isUpper, isSpace, isAlphaNum, isDigit, chr, ord)
+import Data.List(sort)
+import Data.Maybe(isJust)
 import UU.Util.BinaryTrees(tab2tree,btLocateIn)
 import UU.Scanner.Token(Token, EnumValToken(..), valueToken, reserved, errToken)
 import UU.Scanner.Position(Pos, initPos, advc, adv)
@@ -41,9 +41,9 @@ import UU.Scanner.Position(Pos, initPos, advc, adv)
  -}
 
 scanFile :: [String] -> [String] -> String -> String -> FilePath -> IO [Token]
-scanFile keywordstxt keywordsops specchars opchars fn = 
+scanFile keywordstxt keywordsops specchars opchars fn =
         do txt <- readFile fn
-           return (scan keywordstxt keywordsops specchars opchars (initPos fn) txt) 
+           return (scan keywordstxt keywordsops specchars opchars (initPos fn) txt)
 
 scan :: [String] -> [String] -> String -> String -> Pos -> String -> [Token]
 scan keywordstxt keywordsops specchars opchars pos input
@@ -96,14 +96,14 @@ scan keywordstxt keywordsops specchars opchars pos input
                                    let (name,p1,rest) = scanIdent (advc 2 p) s
                                        ident = c:name
                                        tokens | null rest ||
-                                                head rest /= '`' = errToken "Unterminated infix identifier" p 
+                                                head rest /= '`' = errToken "Unterminated infix identifier" p
                                                                  : doScan p1 rest
-                                              | iskw ident       = errToken ("Keyword used as infix identifier: " ++ ident) p 
+                                              | iskw ident       = errToken ("Keyword used as infix identifier: " ++ ident) p
                                                                  : doScan (advc 1 p1) (tail rest)
-                                              | otherwise        = valueToken TkOp ident p 
+                                              | otherwise        = valueToken TkOp ident p
                                                                  : doScan (advc 1 p1) (tail rest)
                                    in tokens
-                          | otherwise = errToken ("Unexpected character in infix identifier: " ++ show c) p 
+                          | otherwise = errToken ("Unexpected character in infix identifier: " ++ show c) p
                                       : doScan (adv p c) s
                   in res
    -}
@@ -152,9 +152,9 @@ err lc 1 = error ("in scanner bad name definition" ++ maybeshow (lc))
 err lc fn 2
    = error ("in scanner not a valid name in file inclusion" ++ maybeshow (lc))
 -}
-lexNest :: (Pos -> String -> [Token]) 
-        -> Pos 
-        -> String 
+lexNest :: (Pos -> String -> [Token])
+        -> Pos
+        -> String
         -> [Token]
 lexNest cont pos inp = lexNest' cont pos inp
  where lexNest' c p ('-':'}':s) = c (advc 2 p) s

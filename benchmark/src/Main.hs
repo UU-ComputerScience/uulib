@@ -35,11 +35,11 @@ touch (x:xs) = seq x (touch xs)
 
 getResult :: Parser Char a -> String -> IO a
 getResult p str = 
-  return $ unpack $ evalSteps $ parse p str where unpack (Pair v _) = v
-  -- parseIO p str
+  -- return $ unpack $ evalSteps $ parse p str where unpack (Pair v _) = v
+  parseIO p str
 
 sizes :: [Int]
-sizes = [20,50,100,400,800,1000,1500,2000,3000]
+sizes = [1000]
 
 main :: IO ()
 main = defaultMain $ bgroup "uulib" $ map (uncurry bench) $ map mkBench sizes

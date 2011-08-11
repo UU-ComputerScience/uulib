@@ -6,7 +6,7 @@
                Department of Computer Science
                Utrecht University
                P.O. Box 80.089
-               3508 TB UTRECHT  
+               3508 TB UTRECHT
                the Netherlands
                swierstra@cs.uu.nl
 -}
@@ -18,7 +18,7 @@
 -}
 module Bibtex where
 import UU.Parsing
-import Char
+import Data.Char
 
 newtype IS s = IS (Int,Int,[s])
 
@@ -32,18 +32,18 @@ instance InputState (IS Char) Char (Maybe String) where
 instance Symbol Char where
  symBefore = pred
  symAfter  = succ
- 
+
 
 parsebib filename -- e.g. parsebib "btxdoc.bib"
-  = let  showMessage (Msg expecting position action)  
+  = let  showMessage (Msg expecting position action)
           =  let pos = case position of
                            Nothing -> "at end of file"
-                           Just s  -> case action of 
+                           Just s  -> case action of
                                 Insert _ -> "before " ++ show s
-                                Delete t -> "at " ++ show t  
+                                Delete t -> "at " ++ show t
              in "\n?? Error      : " ++ pos ++
                 "\n?? Expecting  : " ++ show expecting ++
-                "\n?? Repaired by: " ++ show action ++ "\n" 
+                "\n?? Repaired by: " ++ show action ++ "\n"
     in do input <- readFile filename
           res   <- parseIOMessage showMessage  pBibData (IS (1,1,input))
           putStr ("\nResult:" ++ show (length res) ++ " bib items were parsed\n")
@@ -60,7 +60,7 @@ data BibEntry  = Entry     String  (String, [Field])  -- kind keyword fieldlist
 
 type Field    = (String, [ValItem])
 
-data ValItem  = StringVal String          
+data ValItem  = StringVal String
 	      | IntVal    Int
 	      | NameUse   String
 	      deriving Show
@@ -72,20 +72,20 @@ data ValItem  = StringVal String
 pBibData    = pChainr ((\ entry  _ right -> entry:right) <$> pBibEntry)
                       ( [] <$ pList (allChars `pExcept` "@"))
 
-pBibEntry   
+pBibEntry
  =  (   Entry     <$ pAt <*> pName           <*> pOpenClose (   pKeyName       <*  pSpec ','
-		                                                          <+> pListSep_ng pComma pField 
+		                                                          <+> pListSep_ng pComma pField
                                                             <* (pComma `opt` ' '))
     <|> Comment   <$ pAt <*  pKey "comment"  <*> (  pCurly (pList (allChars `pExcept` "}"))
 	                                               <|> pParen (pList (allChars `pExcept` ")"))
                                                  )
-    <|> Preamble  <$ pAt <*  pKey "preamble" <*> pOpenClose pValItems 
+    <|> Preamble  <$ pAt <*  pKey "preamble" <*> pOpenClose pValItems
     <|> StringDef <$ pAt <*  pKey "string"   <*> pOpenClose pField
-    ) 
+    )
 
 pField     =  pName <* pSpec '=' <+> pValItems
 
-pValItems  =  pList1Sep (pSpec '#') (   StringVal   <$> pString 
+pValItems  =  pList1Sep (pSpec '#') (   StringVal   <$> pString
 	                                   <|> int_or_name <$> pName
                                     )
               where int_or_name s = if all isDigit s
@@ -101,7 +101,7 @@ pSpec c = pSym c  <* pLAYOUT
 
 pParen      p = pPacked (pSpec '(') (pSpec ')') p
 pCurly      p = pPacked (pSpec '{') (pSpec '}') p
-pOpenClose  p = pParen p <|> pCurly p 
+pOpenClose  p = pParen p <|> pCurly p
 pComma        = pCostSym  4 ',' ',' <* pLAYOUT
 pAt           = pSpec '@'
 
@@ -114,13 +114,13 @@ pKey [s]     = lift <$> (pSym s <|> pSym (toUpper s)) <*  pLAYOUT
 pKey (s:ss)  = (:)  <$> (pSym s <|> pSym (toUpper s)) <*> pKey ss
 pKey []      = usererror "Scanner: You cannot have empty reserved words!"
 
-pString 
+pString
  = let  curlyStrings  = stringcons <$> pSym '{' <*> pConc pStringWord <*> pSym '}'
         pStringWordDQ = lift       <$> pStringCharDQ <|> curlyStrings
         pStringWord   = lift       <$> pStringChar   <|> curlyStrings
         pStringCharDQ = allChars `pExcept` "\"{}"
         pStringChar   = pStringCharDQ <|> pSym '\"'
-        pConc         = pFoldr ((++),[]) 
+        pConc         = pFoldr ((++),[])
         stringcons c1 ss c2 = [c1] ++ ss ++ [c2]
    in (   pSym '"' *> pConc pStringWordDQ <* pSym '"'
 	     <|> pSym '{' *> pConc pStringWord   <* pSym '}'

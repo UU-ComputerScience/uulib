@@ -3,7 +3,7 @@
 module UU.Parsing.Perms(Perms(), pPerms, pPermsSep, succeedPerms, (~*~), (~$~)) where
 
 import UU.Parsing
-import Maybe
+import Data.Maybe
 
 -- =======================================================================================
 -- ===== PERMUTATIONS ================================================================
@@ -16,7 +16,7 @@ instance IsParser p s => Functor (Perms p) where
   fmap f (Perms (mb, bs)) = Perms (fmap (f<$>) mb, map (fmap f) bs)
 
 instance IsParser p s => Functor (Br p) where
-  fmap f (Br perm p) = Br (fmap (f.) perm) p 
+  fmap f (Br perm p) = Br (fmap (f.) perm) p
 
 (~*~) :: IsParser p s => Perms p (a -> b) -> p a -> Perms p b
 perms ~*~ p = perms `add` (getzerop p, getonep p)
@@ -25,7 +25,7 @@ perms ~*~ p = perms `add` (getzerop p, getonep p)
 f     ~$~ p = succeedPerms f ~*~ p
 
 succeedPerms :: IsParser p s => a -> Perms p a
-succeedPerms x = Perms (Just (pLow x), []) 
+succeedPerms x = Perms (Just (pLow x), [])
 
 add :: IsParser p s => Perms p (a -> b) -> (Maybe (p a),Maybe (p a)) -> Perms p b
 add b2a@(Perms (eb2a, nb2a)) bp@(eb, nb)
@@ -42,7 +42,7 @@ add b2a@(Perms (eb2a, nb2a)) bp@(eb, nb)
         )[ Br ((flip `changing` c) `add`  bp) d |  Br c d <- nb2a]
       )
 
-pPerms :: IsParser p s => Perms p a -> p a 
+pPerms :: IsParser p s => Perms p a -> p a
 pPerms (Perms (empty,nonempty))
  = foldl (<|>) (fromMaybe pFail empty) [ (flip ($)) <$> p <*> pPerms pp
                                        | Br pp  p <- nonempty
@@ -51,8 +51,8 @@ pPerms (Perms (empty,nonempty))
 pPermsSep :: IsParser p s => p x -> Perms p a -> p a
 pPermsSep (sep :: p z) perm = p2p (pSucceed ()) perm
  where  p2p ::  p () -> Perms p a -> p a
-        p2p fsep (Perms (mbempty, nonempties)) = 
+        p2p fsep (Perms (mbempty, nonempties)) =
                 let empty          = fromMaybe  pFail mbempty
                     pars (Br t p)  = flip ($) <$ fsep <*> p <*> p2p_sep t
-                in foldr (<|>) empty (map pars nonempties)              
-        p2p_sep =  p2p (()<$ sep)                                    
+                in foldr (<|>) empty (map pars nonempties)
+        p2p_sep =  p2p (()<$ sep)
