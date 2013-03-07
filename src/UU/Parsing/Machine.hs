@@ -307,6 +307,8 @@ mapOnePars fp    ~(OneDescr   fi t) = OneDescr  fi [ (k, TableEntry (fp p) (fp.c
 -- =======================================================================================
 -- ===== MKPARSER ========================================================================
 -- =======================================================================================
+mkParser :: (InputState state s p, Symbol s, Ord s, OutputState result) =>
+            Nat -> Maybe (Bool, Either a (ParsRec state result s p a)) -> OneDescr state result s p a -> AnaParser state result s p a
 mkParser length zd ~descr@(OneDescr firsts tab) -- pattern matching should be lazy for lazy computation of length for empty parsers
  = let parstab    = foldr1 mergeTables  [[(k, p)]| (k, TableEntry p _) <- tab]
        mkactualparser getp 
