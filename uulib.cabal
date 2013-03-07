@@ -1,0 +1,36 @@
+cabal-version: >= 1.6
+build-type: Simple
+name: uulib
+version: 0.9.14
+license: BSD3
+license-file: COPYRIGHT
+maintainer: S. Doaitse Swierstra
+homepage: http://www.cs.uu.nl/wiki/HUT/WebHome
+description: Fast Parser Combinators and Pretty Printing Combinators
+synopsis: Haskell Utrecht Tools Library
+category: Parsing
+stability: Stable
+copyright: Universiteit Utrecht
+extra-source-files: README,
+                    examples/bibtex/Bibtex.hs,
+                    examples/parser/Example.hs,
+                    examples/parser/Makefile,
+                    examples/parser/README,
+                    examples/parser/Scanner.x
+
+library
+  build-depends: base>=4 && <5, ghc-prim >= 0.2.0.0
+  exposed-modules: UU.Parsing.CharParser UU.Parsing.Derived
+                   UU.Parsing.Interface UU.Parsing.MachineInterface
+                   UU.Parsing.Merge UU.Parsing.Offside UU.Parsing.Perms
+                   UU.Parsing.StateParser UU.Parsing
+                   UU.PPrint
+                   UU.Pretty.Ext UU.Pretty UU.Scanner.GenToken UU.Scanner.GenTokenOrd
+                   UU.Scanner.GenTokenParser UU.Scanner.GenTokenSymbol
+                   UU.Scanner.Position UU.Scanner.Scanner
+                   UU.Scanner.Token UU.Scanner.TokenParser UU.Scanner.TokenShow
+                   UU.Scanner UU.Util.BinaryTrees UU.Util.PermTree UU.Util.Utils
+                   UU.Pretty.Basic UU.Parsing.Machine
+  extensions:  RankNTypes FunctionalDependencies TypeSynonymInstances UndecidableInstances FlexibleInstances MultiParamTypeClasses FlexibleContexts CPP ExistentialQuantification
+  ghc-options: -O0
+  hs-source-dirs: src
