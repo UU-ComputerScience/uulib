@@ -4,6 +4,9 @@
 
 module UU.Parsing.Machine where
 import GHC.Prim
+#if __GLASGOW_HASKELL__ >= 708
+import GHC.Types (isTrue#)
+#endif
 import UU.Util.BinaryTrees 
 import UU.Parsing.MachineInterface
 
@@ -165,14 +168,21 @@ libBest' _            (OkVal w rs) lf rf = OkVal (rf.w) rs
 libBest' (Ok      ls) _            lf rf = OkVal lf ls           
 libBest' _            (Ok      rs) lf rf = OkVal rf rs   
 libBest' l@(Cost i ls ) r@(Cost j rs ) lf rf
- | i ==# j = Cost i (libBest' ls rs lf rf)
- | i <# j  = Cost i (val lf ls)
- | i ># j  = Cost j (val rf rs)
+ | isTrue (i ==# j) = Cost i (libBest' ls rs lf rf)
+ | isTrue (i <# j)  = Cost i (val lf ls)
+ | isTrue (i ># j)  = Cost j (val rf rs)
 libBest' l@(NoMoreSteps v) _                 lf rf = NoMoreSteps (lf v)
 libBest' _                 r@(NoMoreSteps w) lf rf = NoMoreSteps (rf w)
 libBest' l@(Cost i ls)     _                 lf rf = Cost i (val lf ls)
 libBest' _                 r@(Cost j rs)     lf rf = Cost j (val rf rs)
 libBest' l                 r                 lf rf = libCorrect l r lf rf
+
+-- Unboxed comparison changed in 7.8: https://ghc.haskell.org/trac/ghc/wiki/NewPrimopsInGHC7.8
+#if __GLASGOW_HASKELL__ >= 708
+isTrue = isTrue#
+#else
+isTrue = id
+#endif
 
 lib_correct :: Ord s => (b -> c -> Steps d s p) -> (b -> c -> Steps d s p) -> b -> c -> Steps d s p
 lib_correct p q = \k inp -> libCorrect (p k inp) ( q k inp) id id
@@ -193,18 +203,18 @@ data ToBeat a = ToBeat Int# a
 
 traverse :: ToBeat (Steps a s p) -> (Steps v s p -> Steps a s p, Steps v s p) ->  Int#  -> Int# -> ToBeat (Steps a s p)
 traverse b@(ToBeat bv br) (f, s) v                  0#  = {- trace ("comparing " ++ show bv ++ " with " ++ show v ++ "\n") $ -}
-                                                           if bv <=# v 
+                                                           if isTrue (bv <=# v)
                                                            then b 
                                                            else ToBeat v (f s)
 traverse b@(ToBeat bv br) (f, Ok      l) v             n = {- trace ("adding" ++ show n ++ "\n") $-} traverse b (f.Ok     , l) (v -# n +# 4#) (n -# 1#)
 traverse b@(ToBeat bv br) (f, OkVal w l) v             n = {- trace ("adding" ++ show n ++ "\n") $-} traverse b (f.OkVal w, l) (v -# n +# 4#) (n -# 1#)
-traverse b@(ToBeat bv br) (f, Cost i  l) v             n = if i +# v >=# bv 
+traverse b@(ToBeat bv br) (f, Cost i  l) v             n = if isTrue (i +# v >=# bv)
                                                            then b 
                                                            else traverse b (f.Cost i, l) (i +# v) n
 traverse b@(ToBeat bv br) (f, Best l _ r) v            n = traverse (traverse b (f, l) v n) (f, r) v n
-traverse b@(ToBeat bv br) (f, StRepair i msgs r) v     n = if i +# v >=# bv then b 
+traverse b@(ToBeat bv br) (f, StRepair i msgs r) v     n = if isTrue (i +# v >=# bv) then b 
                                                            else traverse b (f.StRepair i msgs, r) (i +# v) (n -# 1#)
-traverse b@(ToBeat bv br) (f, t@(NoMoreSteps _)) v     n = if bv <=# v then b else ToBeat v (f t)
+traverse b@(ToBeat bv br) (f, t@(NoMoreSteps _)) v     n = if isTrue (bv <=# v) then b else ToBeat v (f t)
 -- =======================================================================================
 -- ===== DESCRIPTORS =====================================================================
 -- =======================================================================================
