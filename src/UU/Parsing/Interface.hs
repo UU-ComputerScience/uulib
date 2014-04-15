@@ -8,6 +8,7 @@ module UU.Parsing.Interface
        , module UU.Parsing.Interface
        ) where
 
+import Prelude hiding ((<*>))
 import GHC.Prim
 import UU.Parsing.Machine
 import UU.Parsing.MachineInterface

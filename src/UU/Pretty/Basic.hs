@@ -15,6 +15,8 @@ module UU.Pretty.Basic ( PP (..), PP_Doc, PP_Exp
                  , fpar, spar
                  ) where
 
+import Prelude hiding (join)
+
 {- Pretty-printers and pretty-printing combinators. Version 2.0d
    Authors: S. Doaitse Swierstra and Pablo R. Azero
    Date: July, 1999
@@ -192,6 +194,7 @@ data T_Frame = F  T_PW   T_PLL
              deriving Eq
 
 instance Ord T_Frame where
+  (F w _) <= (F w' _) = w <= w'
   max x@(F w _) y@(F w' _)
     | w > w'    = x
     | otherwise = y
@@ -252,6 +255,9 @@ instance Eq Format  where
          && last_w  x == last_w  y
 
 instance Ord Format where
+  x <= y =  height x <= height y
+         || (  height x == height y
+            && total_w x <= total_w y )
   x <  y =  height x < height y
          || (  height x == height y
             && total_w x < total_w y )
