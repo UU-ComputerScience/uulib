@@ -18,7 +18,11 @@ module UU.Parsing.Offside( parseOffside
                          , Stream
                          , OffsideParser(..)
                          ) where
-                         
+
+#if __GLASGOW_HASKELL__ >= 710
+import Prelude hiding ( (<$>), (<$), (<*>), (<*), (*>) )
+#endif
+
 import GHC.Prim
 import Data.Maybe
 import UU.Parsing.Interface

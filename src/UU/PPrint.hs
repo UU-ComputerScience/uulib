@@ -1,3 +1,5 @@
+{-# LANGUAGE CPP #-}
+
 --------------------------------------------------------------------------------
 {-| Module      :  PPrint
     Copyright   :  (c) Daan Leijen 2000, <http://www.cs.uu.nl/~daan>
@@ -53,6 +55,11 @@ module UU.PPrint
         , renderPretty, renderCompact
         , displayS, displayIO
         ) where
+
+
+#if __GLASGOW_HASKELL__ >= 710
+import Prelude hiding ( (<$>) )
+#endif
 
 import System.IO      (Handle,hPutStr,hPutChar,stdout)
 

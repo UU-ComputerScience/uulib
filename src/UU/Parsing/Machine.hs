@@ -3,6 +3,11 @@
               ScopedTypeVariables #-}
 
 module UU.Parsing.Machine where
+
+#if __GLASGOW_HASKELL__ >= 710
+import Prelude hiding ( traverse )
+#endif
+
 import GHC.Prim
 #if __GLASGOW_HASKELL__ >= 708
 import GHC.Types (isTrue#)

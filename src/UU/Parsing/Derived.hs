@@ -1,4 +1,10 @@
+{-# LANGUAGE CPP #-}
+
 module UU.Parsing.Derived where
+
+#if __GLASGOW_HASKELL__ >= 710
+import Prelude hiding ( (<$>), (<*>), (<*), (*>) )
+#endif
 
 import UU.Parsing.Interface
 
