@@ -1,4 +1,10 @@
+{-# LANGUAGE CPP #-}
+
 module UU.Scanner.TokenParser where
+
+#if __GLASGOW_HASKELL__ >= 710
+import Prelude hiding ( (<$>), (<$) )
+#endif
 
 import UU.Parsing.Interface(IsParser(..))
 import UU.Parsing.Derived(pListSep, pPacked)
