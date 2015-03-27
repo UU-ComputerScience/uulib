@@ -1,7 +1,7 @@
 cabal-version: >= 1.6
 build-type: Simple
 name: uulib
-version: 0.9.16
+version: 0.9.17
 license: BSD3
 license-file: COPYRIGHT
 maintainer: S. Doaitse Swierstra
