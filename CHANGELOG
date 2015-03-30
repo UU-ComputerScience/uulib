@@ -1,0 +1,9 @@
+uulib Changelog
+===============
+
+
+### 0.9.18
+* Add changelog, update cabal metadata
+
+### 0.9.17
+* GHC 7.10 support (by asr)
