@@ -6,13 +6,8 @@ module UU.Parsing.Interface
        ( AnaParser, pWrap, pMap
        , module UU.Parsing.MachineInterface
        , module UU.Parsing.Interface
+       , (<*>), (<*), (*>), (<$>), (<$), (<|>)
        ) where
-
-#if __GLASGOW_HASKELL__ >= 710
-import Prelude hiding ( (<*>), (<*) )
-#else
-import Prelude hiding ((<*>))
-#endif
 
 import GHC.Prim
 import UU.Parsing.Machine
@@ -20,13 +15,18 @@ import UU.Parsing.MachineInterface
 --import IOExts
 import System.IO.Unsafe
 import System.IO
+import Control.Applicative
+
 -- ==================================================================================
 -- ===== PRIORITIES ======================================================================
 -- =======================================================================================
-infixl 3 <|>
-infixl 4 <*>, <$> 
-infixl 4 <$, <*, *>
 
+{- 20150402 AD: use of Applicative, Functor, Alternative
+infixl 3 <|>:
+infixl 4 <*>:, <$>: 
+infixl 4 <$:
+infixl 4 <*:, *>:
+-}
 
 -- =======================================================================================
 -- ===== ANAPARSER INSTANCES =============================================================
@@ -40,23 +40,37 @@ type Parser s = AnaParser [s] Pair s (Maybe s)
 -- to write parsers. A minimal complete instance definition consists of
 -- definitions for '(<*>)', '(<|>)', 'pSucceed', 'pLow', 'pFail', 
 -- 'pCostRange', 'pCostSym', 'getfirsts', 'setfirsts', and 'getzerop'.
-class  IsParser p s | p -> s where
+-- All operators available through 'Applicative', 'Functor", and 'Alternative' have the same names suffixed with ':'.
+class (Applicative p, Alternative p, Functor p) => IsParser p s | p -> s where
+  {- 20150402 AD: use of Applicative, Functor, Alternative
   -- | Sequential composition. Often used in combination with <$>.
   -- The function returned by parsing the left-hand side is applied 
   -- to the value returned by parsing the right-hand side.
   -- Note: Implementations of this combinator should lazily match on
   -- and evaluate the right-hand side parser. The derived combinators 
   -- for list parsing will explode if they do not.
-  (<*>) :: p (a->b) -> p a -> p b
+  (<*>:) :: p (a->b) -> p a -> p b
   -- | Value ignoring versions of sequential composition. These ignore
   -- either the value returned by the parser on the right-hand side or 
   -- the left-hand side, depending on the visual direction of the
   -- combinator.
-  (<* ) :: p a      -> p b -> p a
-  ( *>) :: p a      -> p b -> p b
+  (<*: ) :: p a      -> p b -> p a
+  ( *>:) :: p a      -> p b -> p b
   -- | Applies the function f to the result of p after parsing p.
-  (<$>) :: (a->b)   -> p a -> p b
-  (<$ ) :: b        -> p a -> p b
+  (<$>:) :: (a->b)   -> p a -> p b
+  (<$: ) :: b        -> p a -> p b
+  -}
+  {- 20150402 AD: use of Applicative, Functor, Alternative
+  f <$>: p = pSucceed f <*>: p
+  f <$:  q = pSucceed f <*  q
+  p <*:  q = pSucceed       const  <*>: p <*>: q
+  p  *>: q = pSucceed (flip const) <*>: p <*>: q
+  -}
+  {- 20150402 AD: use of Applicative, Functor, Alternative
+  -- | Alternative combinator. Succeeds if either of the two arguments
+  -- succeed, and returns the result of the best success parse.
+  (<|>:) :: p a -> p a -> p a
+  -}
   -- | Two variants of the parser for empty strings. 'pSucceed' parses the
   -- empty string, and fully counts as an alternative parse. It returns the
   -- value passed to it.
@@ -64,13 +78,7 @@ class  IsParser p s | p -> s where
   -- | 'pLow' parses the empty string, but alternatives to pLow are always
   -- preferred over 'pLow' parsing the empty string.
   pLow     :: a -> p a
-  f <$> p = pSucceed f <*> p
-  f <$  q = pSucceed f <*  q
-  p <*  q = pSucceed       const  <*> p <*> q
-  p  *> q = pSucceed (flip const) <*> p <*> q
-  -- | Alternative combinator. Succeeds if either of the two arguments
-  -- succeed, and returns the result of the best success parse.
-  (<|>) :: p a -> p a -> p a
+  pSucceed = pure
   -- | This parser always fails, and never returns any value at all.
   pFail :: p a
   -- | Parses a range of symbols with an associated cost and the symbol to
@@ -88,6 +96,7 @@ class  IsParser p s | p -> s where
   getfirsts    :: p v -> Expecting s
   -- | Set the firsts set in the parser.
   setfirsts    :: Expecting s -> p v ->  p v
+  pFail        =  empty
   pSym a       =  pCostSym   5# a a
   pRange       =  pCostRange 5#
   -- | 'getzerop' returns @Nothing@ if the parser can not parse the empty
@@ -100,20 +109,26 @@ class  IsParser p s | p -> s where
   getonep      :: p v -> Maybe (p v)
 
 
+-- =======================================================================================
+-- ===== AnaParser =======================================================================
+-- =======================================================================================
+
 -- | The fast 'AnaParser' instance of the 'IsParser' class. Note that this
 -- requires a functioning 'Ord' for the symbol type s, as tokens are
 -- often compared using the 'compare' function in 'Ord' rather than always
 -- using '==' rom 'Eq'. The two do need to be consistent though, that is
 -- for any two @x1@, @x2@ such that @x1 == x2@ you must have 
 -- @compare x1 x2 == EQ@.
-instance (Ord s, Symbol s, InputState state s p, OutputState result) => IsParser (AnaParser state result s p) s   where
-  (<*>) p q = anaSeq libDollar  libSeq  ($) p q
-  (<* ) p q = anaSeq libDollarL libSeqL const p q
-  ( *>) p q = anaSeq libDollarR libSeqR (flip const) p q
+instance (Ord s, Symbol s, InputState state s p, OutputState result) => IsParser (AnaParser state result s p) s where
+  {- 20150402 AD: use of Applicative, Functor, Alternative
+  (<*>:) p q = anaSeq libDollar  libSeq  ($) p q
+  (<*: ) p q = anaSeq libDollarL libSeqL const p q
+  ( *>:) p q = anaSeq libDollarR libSeqR (flip const) p q
   pSucceed =  anaSucceed
-  pLow     =  anaLow
-  (<|>) =  anaOr
+  (<|>:) =  anaOr
   pFail = anaFail
+  -}
+  pLow     =  anaLow
   pCostRange   = anaCostRange
   pCostSym i ins sym = anaCostRange i ins (mk_range sym sym)
   getfirsts    = anaGetFirsts
@@ -126,6 +141,26 @@ instance (Ord s, Symbol s, InputState state s p, OutputState result) => IsParser
                                        }
   getonep   p = let tab = table (onep p)
                 in if null tab then Nothing else Just (mkParser (leng p) Nothing (onep p))
+
+instance (Ord s, Symbol s, InputState state s p, OutputState result) => Applicative (AnaParser state result s p) where
+  (<*>) p q = anaSeq libDollar  libSeq  ($) p q
+  {-# INLINE (<*>) #-}
+  (<* ) p q = anaSeq libDollarL libSeqL const p q
+  {-# INLINE (<*) #-}
+  ( *>) p q = anaSeq libDollarR libSeqR (flip const) p q
+  {-# INLINE (*>) #-}
+  pure      = anaSucceed
+  {-# INLINE pure #-}
+
+instance (Ord s, Symbol s, InputState state s p, OutputState result) => Alternative (AnaParser state result s p) where
+  (<|>) = anaOr
+  {-# INLINE (<|>) #-}
+  empty = anaFail
+  {-# INLINE empty #-}
+
+instance (Ord s, Symbol s, InputState state s p, OutputState result, Applicative (AnaParser state result s p)) => Functor (AnaParser state result s p) where
+  fmap f p = pure f <*> p
+  {-# INLINE fmap #-}
 
 instance InputState [s] s (Maybe s) where
  splitStateE []     = Right' []

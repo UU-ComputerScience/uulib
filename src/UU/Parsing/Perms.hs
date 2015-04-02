@@ -3,10 +3,6 @@
 
 module UU.Parsing.Perms(Perms(), pPerms, pPermsSep, succeedPerms, (~*~), (~$~)) where
 
-#if __GLASGOW_HASKELL__ >= 710
-import Prelude hiding ( (<$>), (<$), (<*>) )
-#endif
-
 import UU.Parsing
 import Data.Maybe
 

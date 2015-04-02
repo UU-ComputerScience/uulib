@@ -2,11 +2,7 @@
 
 module UU.Scanner.TokenParser where
 
-#if __GLASGOW_HASKELL__ >= 710
-import Prelude hiding ( (<$>), (<$) )
-#endif
-
-import UU.Parsing.Interface(IsParser(..))
+import UU.Parsing.Interface(IsParser(..), (<$), (<$>))
 import UU.Parsing.Derived(pListSep, pPacked)
 import UU.Scanner.Position(Pos)
 import UU.Scanner.GenTokenParser(pReserved, pValToken)
@@ -42,7 +38,7 @@ pInteger16Pos  =   pValToken TkInteger16 "0"
 pFractionPos   =   pValToken TkFraction  "0.0"
 pVaridPos      =   pValToken TkVarid     "<identifier>" 
 pConidPos      =   pValToken TkConid     "<Identifier>" 
-pConsymPos     =   pValToken TkConOp 	 "<conoperator>"
+pConsymPos     =   pValToken TkConOp     "<conoperator>"
 pVarsymPos     =   pValToken TkOp        "<operator>" 
 pTextnmPos     =   pValToken TkTextnm    "<name>"       
 pTextlnPos     =   pValToken TkTextln    "<line>"     

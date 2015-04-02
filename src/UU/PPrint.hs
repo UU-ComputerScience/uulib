@@ -57,11 +57,11 @@ module UU.PPrint
         ) where
 
 
-#if __GLASGOW_HASKELL__ >= 710
-import Prelude hiding ( (<$>) )
-#endif
-
 import System.IO      (Handle,hPutStr,hPutChar,stdout)
+
+#if __GLASGOW_HASKELL__ >= 710
+import Prelude hiding ((<$>))
+#endif
 
 infixr 5 </>,<//>,<$>,<$$>
 infixr 6 <>,<+>

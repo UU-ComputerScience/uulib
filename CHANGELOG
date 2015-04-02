@@ -2,6 +2,9 @@ uulib Changelog
 ===============
 
 
+### 0.9.19
+* Refactor of IsParser into Applicative, Functor, and Alternative. No need to hide the previously duplicate interface anymore.
+
 ### 0.9.18
 * Add changelog, update cabal metadata
 

@@ -2,10 +2,6 @@
 
 module UU.Parsing.Merge((<||>), pMerged, list_of) where
 
-#if __GLASGOW_HASKELL__ >= 710
-import Prelude hiding ( (<$>), (<*>) )
-#endif
-
 import UU.Parsing
 
 -- ==== merging

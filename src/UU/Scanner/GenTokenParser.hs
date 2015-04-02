@@ -4,12 +4,8 @@
 
 module UU.Scanner.GenTokenParser where
 
-#if __GLASGOW_HASKELL__ >= 710
-import Prelude hiding ( (<$>) )
-#endif
-
 import GHC.Base
-import UU.Parsing.Interface(IsParser(pCostSym, pSym, (<$>)))
+import UU.Parsing.Interface(IsParser(pCostSym, pSym), (<$>))
 import UU.Scanner.GenToken(GenToken(..))
 import UU.Scanner.Position(Pos, noPos)
 

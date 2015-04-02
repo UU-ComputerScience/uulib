@@ -19,12 +19,9 @@ module UU.Parsing.Offside( parseOffside
                          , OffsideParser(..)
                          ) where
 
-#if __GLASGOW_HASKELL__ >= 710
-import Prelude hiding ( (<$>), (<$), (<*>), (<*), (*>) )
-#endif
-
 import GHC.Prim
 import Data.Maybe
+import Control.Applicative
 import UU.Parsing.Interface
 import UU.Parsing.Machine
 import UU.Parsing.Derived(opt, pFoldr1Sep,pList,pList1, pList1Sep)
@@ -48,7 +45,7 @@ data Stream inp s p
 
 data IndentContext
   = Cxt     Bool                -- properties: allows nesting on equal indentation (triggered by Trigger_IndentGE)
-            Int					-- indentation
+            Int                 -- indentation
 
 data OffsideInput inp s p
   = Off p                                   -- position
@@ -189,15 +186,17 @@ instance Symbol s => Symbol (OffsideSymbol s) where
 newtype OffsideParser i o s p a  = OP (AnaParser (OffsideInput i s p) o (OffsideSymbol s) p a)        
 
 instance  (Symbol s, Ord s, InputState i s p, OutputState o) => IsParser (OffsideParser i o s p) s where
-  (<*>) = operator (<*>)
-  (<* ) = operator (<* )
-  ( *>) = operator ( *>)
-  (<|>) = operator (<|>)
-  (<$>) = operatorr (<$>)
-  (<$ ) = operatorr (<$ )
+  {-
+  (<*>:) = operator  (<*>:)
+  (<*: ) = operator  (<*: )
+  ( *>:) = operator  ( *>:)
+  (<|>:) = operator  (<|>:)
+  (<$>:) = operatorr (<$>:)
+  (<$: ) = operatorr (<$ )
   pSucceed = OP . pSucceed
-  pLow     = OP . pLow
   pFail    = OP pFail
+  -}
+  pLow     = OP . pLow
   pCostRange c s (Range l r) = OP (getSymbol <$> pCostRange c (Symbol s) (Range (Symbol l)(Symbol r)))  
   pCostSym   c s t           = OP (getSymbol <$> pCostSym c (Symbol s) (Symbol t))  
   pSym   s                   = OP (getSymbol <$> pSym (Symbol s))  
@@ -206,6 +205,28 @@ instance  (Symbol s, Ord s, InputState i s p, OutputState o) => IsParser (Offsid
   setfirsts  exp (OP p)      = OP (setfirsts (addSymbol exp) p)
   getzerop  (OP p)           = fmap OP (getzerop p)
   getonep   (OP p)           = fmap OP (getonep p)
+
+instance (Symbol s, Ord s, InputState i s p, OutputState o) => Applicative (OffsideParser i o s p) where
+  (<*>) = operator  (<*>)
+  {-# INLINE (<*>) #-}
+  (<* ) = operator  (<* )
+  {-# INLINE (<*) #-}
+  ( *>) = operator  ( *>)
+  {-# INLINE (*>) #-}
+  pure      = OP . pure
+  {-# INLINE pure #-}
+
+instance (Symbol s, Ord s, InputState i s p, OutputState o) => Alternative (OffsideParser i o s p) where
+  (<|>) = operator  (<|>)
+  {-# INLINE (<|>) #-}
+  empty = OP pFail
+  {-# INLINE empty #-}
+
+instance (Symbol s, Ord s, InputState i s p, OutputState o, Applicative (OffsideParser i o s p)) => Functor (OffsideParser i o s p) where
+  fmap = operatorr fmap
+  {-# INLINE fmap #-}
+  (<$) = operatorr (<$)
+  {-# INLINE (<$) #-}
 
 removeSymbol exp = case exp of
         ESym (Range (Symbol l) (Symbol r)) -> ESym (Range l r)

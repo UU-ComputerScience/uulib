@@ -1,15 +1,54 @@
 {-# LANGUAGE CPP #-}
 
-module UU.Parsing.Derived where
+module UU.Parsing.Derived
+  ( -- * Checking
+    acceptsepsilon
+  , mnz
+  
+    -- * Prelude defs
+  , (<..>)
+  , pExcept
+  , opt
 
-#if __GLASGOW_HASKELL__ >= 710
-import Prelude hiding ( (<$>), (<*>), (<*), (*>) )
-#endif
+    -- * Sequential compositions
+  , asList
+  , asList1
+  , asOpt
+  , (<+>)
+  , (<**>)
+  , (<$$>)
+  , (<??>)
+  , (<?>)
+  , pPacked
+
+    -- * Iterating parsers
+  , pFoldr_ng, pFoldr_gr, pFoldr
+  , pFoldr1_ng, pFoldr1_gr, pFoldr1
+  , pFoldrSep_ng, pFoldrSep_gr, pFoldrSep
+  , pFoldr1Sep_ng, pFoldr1Sep_gr, pFoldr1Sep
+  
+  , pList_ng, pList_gr, pList
+  , pList1_ng, pList1_gr, pList1
+  , pListSep_ng, pListSep_gr, pListSep
+  , pList1Sep_ng, pList1Sep_gr, pList1Sep
+  
+  , pChainr_ng, pChainr_gr, pChainr
+  , pChainl_ng, pChainl_gr, pChainl
+
+    -- * Misc
+  , pAny
+  , pAnySym
+  , pToks
+  , pLocate
+  )
+  where
 
 import UU.Parsing.Interface
+import Control.Applicative
 
 infixl 2 <?>
-infixl 4  <**>, <??>, <+>
+-- infixl 4  <**>
+infixl 4  <??>, <+>
 infixl 2 `opt`
 infixl 5 <..>
 
@@ -79,6 +118,7 @@ asOpt   exp = setfirsts (ESeq [EStr "( ", exp, EStr  " ...)?"])
 (<+>) :: (IsParser p s) => p a -> p b -> p (a, b)
 pa <+> pb       = (,) <$> pa <*> pb
 
+{-
 -- | Suppose we have a parser a with two alternatives that both start
 -- with recognizing a non-terminal p, then we will typically rewrite:
 --
@@ -90,6 +130,7 @@ pa <+> pb       = (,) <$> pa <*> pb
 -- > a = p <**> (f <$$> q <|> g <$$> r)
 (<**>) :: (IsParser p s) => p a -> p (a -> b) -> p b
 p <**> q        = (\ x f -> f x) <$> p <*> q
+-}
 
 (<$$>) :: (IsParser p s) => (a -> b -> c) -> p b -> p (a -> c)
 f <$$> p        = pSucceed (flip f) <*> p
