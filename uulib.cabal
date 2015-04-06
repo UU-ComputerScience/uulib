@@ -15,7 +15,8 @@ copyright: Universiteit Utrecht
 cabal-version: >= 1.6
 build-type: Simple
 
-extra-source-files: README,
+extra-source-files: README.md,
+                    CHANGELOG,
                     examples/bibtex/Bibtex.hs,
                     examples/parser/Example.hs,
                     examples/parser/Makefile,
