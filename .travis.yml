@@ -1,0 +1,29 @@
+# Modified version of Agda's travis.yml
+
+language: haskell
+
+ghc:
+  - 7.8.4
+
+install:
+  # Apparently travis doesn't have "time".
+  - sudo apt-get install time
+  # With old GHCs, we get an old cabal-install
+  - cabal install cabal-install
+  - export PATH=$HOME/.cabal/bin:$PATH
+  # Showing Cabal configuration
+  - cat $HOME/.cabal/config
+  # GO GO GO
+  - cabal install --only-dependencies -j
+
+script:
+  - cabal configure -v2
+  - cabal build -v2
+  - travis_wait cabal install -v2
+
+matrix:
+  fast_finish: false
+
+branches:
+  only:
+    - master
