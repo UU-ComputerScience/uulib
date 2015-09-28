@@ -45,23 +45,23 @@ data Expr
 --           (by introducing priority levels for the operators)
 
 
--- Term -> let var = Expr in Expr
+-- Term -> let var = Expr in Expr | Add
 pExpr :: TokenParser Expr
 pExpr
   =   (\_ x _ e _ b -> Let x e b) <$> pKey "let" <*> pVarid <*> pKey "=" <*> pExpr <*> pKey "in" <*> pExpr
-  <|> pMult
+  <|> pAdd
 
--- Expr -> Factor | Factor * Expr
-pMult :: TokenParser Expr
-pMult
+-- Add -> Factor | Factor + Expr
+pAdd :: TokenParser Expr
+pAdd
   =   pFactor 
-  <|> (\l _ r -> Times l r) <$> pFactor <*> pKey "*" <*> pExpr
+  <|> (\l _ r -> Plus l r) <$> pFactor <*> pKey "+" <*> pExpr
 
 -- Factor -> Term | Term * Factor
 pFactor :: TokenParser Expr
 pFactor
   =   pTerm
-  <|> (\l _ r -> Plus l r) <$> pTerm <*> pKey "+" <*> pFactor
+  <|> (\l _ r -> Times l r) <$> pTerm <*> pKey "*" <*> pFactor
 
 -- Term -> var
 -- Term -> String
@@ -78,7 +78,7 @@ pTerm
 -- test it
 main :: IO ()
 main
-  = let res = parseTokens pExpr (tokenize "nofile" "let x = 3 in x+x")
+  = let res = parseTokens pExpr (tokenize "nofile" "let x = 3 in x*y+z")
     in case res of
          Left errs -> mapM_ putStrLn errs
          Right tree -> putStrLn $ show tree
