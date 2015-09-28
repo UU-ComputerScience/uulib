@@ -4,6 +4,7 @@
 module Scanner(tokenize) where
 
 import UU.Scanner
+import Data.Word (Word8)
 }
 
 $litChar   = [^[\" \\]]
@@ -30,6 +31,13 @@ type AlexInput = (Pos, String)
 
 alexInputPrevChar :: AlexInput -> Char
 alexInputPrevChar = error "alexInputPrevChar: there is no need to go back in the input."
+
+-- In Alex3 alexGetByte must be defined.
+alexGetByte :: AlexInput -> Maybe (Word8, AlexInput)
+alexGetByte (_, []) = Nothing
+alexGetByte (p, (c:cs))
+  = let p' = adv p c
+    in Just ((fromIntegral $ ord c), (p', cs))
 
 alexGetChar :: AlexInput -> Maybe (Char, AlexInput)
 alexGetChar (_, []) = Nothing
