@@ -15,8 +15,6 @@ module UU.Pretty.Basic ( PP (..), PP_Doc, PP_Exp
                  , fpar, spar
                  ) where
 
-import Prelude hiding (join)
-
 {- Pretty-printers and pretty-printing combinators. Version 2.0d
    Authors: S. Doaitse Swierstra and Pablo R. Azero
    Date: July, 1999
