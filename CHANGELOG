@@ -1,6 +1,9 @@
 uulib Changelog
 ===============
 
+### 0.9.22
+* Applied patch for removing import hide of Prelude(join)
+
 ### 0.9.20
 * Make sure Changelog is included in cabal package/hackage.
 
