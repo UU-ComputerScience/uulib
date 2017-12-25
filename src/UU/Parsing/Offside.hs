@@ -67,7 +67,7 @@ scanOffside :: (InputState i s p, Position p, Eq s)
 scanOffside mod open close triggers ts
   = scanOffsideWithTriggers mod open close (zip (repeat Trigger_IndentGT) triggers) ts
 
-scanOffsideWithTriggers :: (InputState i s p, Position p, Eq s) 
+scanOffsideWithTriggers :: forall i s p. (InputState i s p, Position p, Eq s) 
             =>  s ->  s -> s -> [(OffsideTrigger,s)] -> i -> OffsideInput i s p  
 scanOffsideWithTriggers mod open close triggers ts = start ts []
  where
@@ -125,6 +125,7 @@ scanOffsideWithTriggers mod open close triggers ts = start ts []
         -- L  ( {:ts)  ms     = {: (L  ts (0:ms))       (Note  4) 
         -- L  (t:ts)  (m:ms)  = }: (L  (t:ts)  ms)      if  m /= 0  and  parse-error(t) (Note  5) 
         -- L  (t:ts)  ms      = t : (L  ts ms) 
+        sameln :: (InputState i s p, Position p, Eq s) => i -> [Int] -> OffsideInput i s p
         sameln tts ms
           = case splitStateE tts of
               Left'  t ts  ->
