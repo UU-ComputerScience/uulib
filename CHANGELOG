@@ -1,6 +1,9 @@
 uulib Changelog
 ===============
 
+### 0.9.23
+* Applied patch for ghc 8.2 compatibility
+
 ### 0.9.22
 * Applied patch for removing import hide of Prelude(join)
 
