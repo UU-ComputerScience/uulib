@@ -1,6 +1,9 @@
 uulib Changelog
 ===============
 
+### 0.9.24
+* Applied patch hiding (<>) from Prelude
+
 ### 0.9.23
 * Applied patch for ghc 8.2 compatibility
 
