@@ -3,6 +3,8 @@ uulib Changelog
 
 ### 0.9.24
 * Applied patch hiding (<>) from Prelude
+* Patch made dependent on ghc 8.0
+* Removed warning in Derived w.r.t. type sig
 
 ### 0.9.23
 * Applied patch for ghc 8.2 compatibility
