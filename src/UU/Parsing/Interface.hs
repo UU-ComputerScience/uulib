@@ -158,7 +158,7 @@ instance (Ord s, Symbol s, InputState state s p, OutputState result) => Alternat
   empty = anaFail
   {-# INLINE empty #-}
 
-instance (Ord s, Symbol s, InputState state s p, OutputState result, Applicative (AnaParser state result s p)) => Functor (AnaParser state result s p) where
+instance (Ord s, Symbol s, InputState state s p, OutputState result) => Functor (AnaParser state result s p) where
   fmap f p = pure f <*> p
   {-# INLINE fmap #-}
 
