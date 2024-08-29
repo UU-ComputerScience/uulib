@@ -2,7 +2,7 @@
               UnboxedTuples #-}
 
 module UU.Parsing.MachineInterface where
-import GHC.Prim
+import GHC.Exts ( Int# )
 
 -- | The 'InputState' class contains the interface that the AnaParser
 -- parsers expect for the input. A minimal complete instance definition

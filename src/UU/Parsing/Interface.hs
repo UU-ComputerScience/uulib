@@ -9,7 +9,7 @@ module UU.Parsing.Interface
        , (<*>), (<*), (*>), (<$>), (<$), (<|>)
        ) where
 
-import GHC.Prim
+import GHC.Exts ( Int# )
 import UU.Parsing.Machine
 import UU.Parsing.MachineInterface
 --import IOExts

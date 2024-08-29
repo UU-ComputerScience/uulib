@@ -3,7 +3,6 @@
               ScopedTypeVariables #-}
 
 module UU.Parsing.StateParser(StateParser(..)) where
-import GHC.Prim
 import UU.Parsing.MachineInterface
 import UU.Parsing.Machine(AnaParser, ParsRec(..),RealParser(..),RealRecogn(..), mkPR, anaDynE)
 

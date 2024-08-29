@@ -3,7 +3,6 @@
               ScopedTypeVariables #-}
 
 module UU.Parsing.CharParser where
-import GHC.Prim
 import UU.Parsing.Interface
 import UU.Scanner.Position
 

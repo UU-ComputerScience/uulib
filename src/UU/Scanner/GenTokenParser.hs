@@ -4,7 +4,7 @@
 
 module UU.Scanner.GenTokenParser where
 
-import GHC.Base
+import GHC.Exts ( Int(..) )
 import UU.Parsing.Interface(IsParser(pCostSym, pSym), (<$>))
 import UU.Scanner.GenToken(GenToken(..))
 import UU.Scanner.Position(Pos, noPos)

@@ -19,7 +19,6 @@ module UU.Parsing.Offside( parseOffside
                          , OffsideParser(..)
                          ) where
 
-import GHC.Prim
 import Data.Maybe
 import Control.Applicative
 import UU.Parsing.Interface

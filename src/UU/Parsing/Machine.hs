@@ -8,10 +8,7 @@ module UU.Parsing.Machine where
 import Prelude hiding ( traverse )
 #endif
 
-import GHC.Prim
-#if __GLASGOW_HASKELL__ >= 708
-import GHC.Types (isTrue#)
-#endif
+import GHC.Exts ( Int#, (+#), (-#), (>#), (<#), (<=#), (>=#), (==#), isTrue# )
 import UU.Util.BinaryTrees 
 import UU.Parsing.MachineInterface
 

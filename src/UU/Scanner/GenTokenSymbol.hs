@@ -1,7 +1,6 @@
 {-# LANGUAGE  MagicHash #-}
 
 module UU.Scanner.GenTokenSymbol() where
-import GHC.Prim
 import UU.Scanner.GenToken(GenToken(..))
 import UU.Parsing.MachineInterface(Symbol(..))
 
